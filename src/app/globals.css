@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --main-color:#04AF9E;
 }
 
 @theme inline {
@@ -19,8 +20,232 @@
   }
 }
 
+@font-face {
+  font-family: 'Cera Pro';
+  src: url('/fonts/Cera-Pro-Regular-Demo.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TT Bluescreens';
+  src: url('/fonts/TTBluescreensTrial-Db.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* background: var(--background); */
+  /* color: var(--foreground); */
+  font-family: 'Cera Pro', sans-serif;
+  height: 3100px;
+  background-color: gray;
+  position: relative;
+}
+
+button{
+  cursor: pointer;
+}
+
+.home{
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.logo{
+  margin-right: 224px;
+}
+
+.header{
+  display: flex;
+  /* padding: 0 75px; */
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  height: 100px;
+  align-items: center;
+  color: #ffffff;
+  z-index: 100;
+}
+
+.navbar{
+  display: flex;
+  line-height: 100%;
+  letter-spacing: -3%;
+  align-items: center;
+  gap: 48px;
+  /* font-weight: 500; */
+  margin-right: 102px;
+}
+
+.navbar p {
+  cursor: pointer;
+}
+
+.number{
+  margin-right: 34px;
+}
+
+.hBtn{
+  padding: 6px 35px;
+  clip-path: polygon(18% 0, 100% 0, 82% 100%, 0% 100%);
+  transition: background-color 0.3s ease;
+  background-color: var(--main-color);
+  color: #ffffff;
+  line-height: 22px;
+  letter-spacing: -3%;
+}
+
+.homeSections{
+
+}
+
+section {
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.section_one{
+  height: 100vh;
+  background-color: #8b8484;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* position: absolute; */
+  /* background-image: url('/back.png');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover; */
+}
+
+.section_one_img{
+  position: absolute;
+  top: 0;
+  height: 100vh;
+}
+
+.element_gradient{
+  height: 72vh;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.68) 17.75%, rgba(0, 0, 0, 0) 100%);
+  position: absolute;
+  top: 0;
+}
+
+.arrows_scroll{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+}
+
+.arrow_img{
+  width: 860px;
+  display: flex;
+  justify-content: end;
+  height: 100vh;
+  position: absolute;
+  left: -442px;
+  align-items: center;
+}
+
+.arrow_img_two{
+  width: 860px;
+  display: flex;
+  justify-content: end;
+  height: 100vh;
+  left: -182px;
+  position: absolute;
+  align-items: center;
+}
+
+.arrow_img_three{
+  width: 1105px;
+  height: 323px;
+  position: absolute;
+  z-index: 3;
+  bottom: 53px;
+  left: -290px;
+}
+
+.arrow_one{
+  width: auto;
+  max-height: 900px;
+  height: 100%;
+  z-index: 2;
+}
+
+.arrow_two{
+  width: auto;
+  max-height: 900px;
+  height: 100%;
+  z-index: 1;
+  margin-left: -30%;
+}
+
+.arrow_three{
+  width: auto;
+  height: 323px;
+}
+
+.arrow_title{
+  position: absolute;
+  right: 180px;
+  top: 260px;
+}
+
+.arrow_title h1{
+  font-family: 'TT Bluescreens', sans-serif;
+  font-size: 178px;
+  width: 526px;
+  line-height: 146px;
+  letter-spacing: 0%;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--main-color);
+}
+
+.arrow_title h2{
+  width: 410px;
+  font-family: 'TT Bluescreens', sans-serif;
+  font-weight: 600;
+  font-size: 80px;
+  line-height: 66px;
+  letter-spacing: 0%;
+  text-transform: uppercase;
+  color: #ffffff;
+  z-index: 0;
+  margin-top: 10px;
+  margin-left: 110px;
+}
+
+.arrowBtn{
+  cursor: pointer;
+  padding: 6px 35px;
+  clip-path: polygon(0 0, 90% 0, 100% 50%, 100% 50%, 90% 100%, 0 100%);
+  transition: background-color 0.3s ease;
+  background-color: var(--main-color);
+  color: #ffffff;
+  line-height: 22px;
+  letter-spacing: -3%;
+  margin-top: 60px;
+  margin-left: 110px;
+  font-weight: 500;
+  padding: 14px 32px 14px 21px;
+}
+
+.section_two {
+  height: 100vh;
+  background-color: #04AF9E;
+  z-index: 1;
 }
