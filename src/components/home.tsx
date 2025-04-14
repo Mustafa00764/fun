@@ -81,7 +81,6 @@ export default function HomeSection() {
         <div className="homeSections">
         
             <section className="section_one">
-                <Image src={'/back.png'} alt="logo" width={1440} height={1000} className="section_one_img"/>
                 <div className="element_gradient"></div>
                 <div className="arrows_scroll">
                     <div className="arrow_img animation_scroll">

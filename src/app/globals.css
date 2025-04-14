@@ -118,17 +118,11 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* position: absolute; */
-  /* background-image: url('/back.png');
+  position: absolute; 
+  background-image: url('/back.png');
   background-repeat: no-repeat;
   background-position: center bottom;
-  background-size: cover; */
-}
-
-.section_one_img{
-  position: absolute;
-  top: 0;
-  height: 100vh;
+  background-size: cover;
 }
 
 .element_gradient{
