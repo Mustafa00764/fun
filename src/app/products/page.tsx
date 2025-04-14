@@ -7,19 +7,6 @@ export const metadata: Metadata = {
     title: 'Products'
 }
 
-export const revaidate = 3600
-
-const fetchData = async () => {
-    const response = await fetch('https://api.example.com/products',{
-        cache: 'force-cache',
-        next: {
-            revalidate: 3600, // 1 hours
-        },
-    })
-    const data = await response.json()
-    return data
-}
-
 export default async function Page() {
 
     // const data = await fetchData()
