@@ -161,6 +161,7 @@ export default function HomeSection() {
         ))}
       </p>
     </section>
+    
         </div>
     );
 }
