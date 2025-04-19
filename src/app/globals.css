@@ -227,3 +227,60 @@ body {
   font-size: 30px;
   font-weight: 600;
 }
+
+.sectionFour{
+  padding: 200px 138px;
+}
+
+.clients{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 40px;
+  margin-top: 50px;
+}
+
+.sectionFive{
+  color: var(--white-color);
+  display: flex;
+  gap: 20px;
+  padding: 0 138px;
+}
+
+.sectionFive_texts{
+  padding-top: 75px;
+}
+
+.sectionFive_texts h1{
+  font-family: Cera Pro Medium, sans-serif;
+  font-weight: 500;
+  font-size: 3.75vw;
+  line-height: 4.5vw;
+  letter-spacing: 0%;  
+}
+
+.sectionFive_texts>p{
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 39px;
+  letter-spacing: 0%;
+  margin-top: 20px;
+  max-width: 690px;
+}
+
+.links{
+  display: flex;
+  align-items: center;
+  margin-top: 45px;
+  gap: 20px;
+}
+
+.links p{
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: -3%;
+}
+
+.footer{
+  color: var(--white-color);
+}

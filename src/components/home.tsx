@@ -14,12 +14,18 @@ interface Project {
     text: string
 }
 
-
+interface Clients {
+    id: number,
+    url: string,
+    href: string
+}
 
 export default function HomeSection() {
-    const boxesRef = useRef<HTMLDivElement[]>([]);
-    const wordsRef = useRef<HTMLSpanElement[]>([])
-    const sectionRef = useRef<HTMLDivElement>(null)
+    const boxesRef = useRef<(HTMLDivElement | null)[]>([]);
+    const wordsRef = useRef<HTMLSpanElement[]>([]);
+    const underlineRefs = useRef<HTMLSpanElement[]>([]);
+    const sectionRef = useRef<HTMLDivElement>(null);
+
     const projects: Project[] = [
         {id: 1, img: '/image/p1.png', title: '', text: ''},
         {id: 2, img: '/image/p2.png', title: '', text: ''},
@@ -33,6 +39,69 @@ export default function HomeSection() {
         'Corporate identity', 'Product identity', 'Personal identity',
         'Brand support', 'Naming', 'Logo', 'Packaging', 'Brand guidelines',
         'UI/⁠UX', 'Key Visual', 'Content design'
+    ]
+
+    const clients: Clients[] = [
+        {
+            id:1,
+            url: '/clients/Group1.svg',
+            href: ''
+        },
+        {
+            id:2,
+            url: '/clients/Group2.svg',
+            href: ''
+        },
+        {
+            id:3,
+            url: '/clients/Group3.svg',
+            href: ''
+        },
+        {
+            id:4,
+            url: '/clients/Group4.svg',
+            href: ''
+        },
+        {
+            id:5,
+            url: '/clients/Group5.svg',
+            href: ''
+        },
+        {
+            id:6,
+            url: '/clients/Group6.svg',
+            href: ''
+        },
+        {
+            id:7,
+            url: '/clients/Group7.svg',
+            href: ''
+        },
+        {
+            id:8,
+            url: '/clients/Group8.svg',
+            href: ''
+        },
+        {
+            id:9,
+            url: '/clients/Group9.svg',
+            href: ''
+        },
+        {
+            id:10,
+            url: '/clients/Group10.svg',
+            href: ''
+        },
+        {
+            id:11,
+            url: '/clients/Group11.svg',
+            href: ''
+        },
+        {
+            id:12,
+            url: '/clients/Group12.svg',
+            href: ''
+        },
     ]
 
     useEffect(() => {
@@ -56,112 +125,147 @@ export default function HomeSection() {
             );
         });
 
-        // Text span animations in sectionThree
-        const section = sectionRef.current
-        if (!section) return
-    
         // Scroll анимация появления текста
-        gsap.fromTo(
-          section.querySelectorAll(".word"),
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            stagger: 0.05,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 80%",
-            }
-          }
-        )
+        const section = sectionRef.current;
+        if (!section) return;
 
+        gsap.fromTo(
+            section.querySelectorAll(".word"),
+            { opacity: 0, y: 50 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.05,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 80%",
+                },
+            }
+        );
     }, []);
 
+    const handleMouseEnter = (index: number) => {
+        const wordEl = wordsRef.current[index];
+        const top = wordEl.querySelector('.top');
+        const bottom = wordEl.querySelector('.bottom');
+        const underline = underlineRefs.current[index];
 
-  const handleMouseEnter = (index: number) => {
-    const el = wordsRef.current[index]
-    if (!el) return
+        if (top && bottom && underline) {
+            gsap.to(top, { y: '-100%', duration: 0.4, ease: 'power2.out' });
+            gsap.to(bottom, { y: '0%', duration: 0.4, ease: 'power2.out' });
+            gsap.to(underline, { width: '100%', duration: 0.3, ease: 'power2.out' });
+        }
+    };
 
-    gsap.to(el.querySelector('.text-top'), {
-      yPercent: -100,
-      duration: 0.4,
-      ease: 'power2.out',
-    })
-    gsap.to(el.querySelector('.text-bottom'), {
-      yPercent: -100,
-      duration: 0.4,
-      ease: 'power2.out',
-    })
-  }
+    const handleMouseLeave = (index: number) => {
+        const wordEl = wordsRef.current[index];
+        const top = wordEl.querySelector('.top');
+        const bottom = wordEl.querySelector('.bottom');
+        const underline = underlineRefs.current[index];
 
-  const handleMouseLeave = (index: number) => {
-    const el = wordsRef.current[index]
-    if (!el) return
-
-    gsap.to(el.querySelector('.text-top'), {
-      yPercent: 0,
-      duration: 0.4,
-      ease: 'power2.out',
-    })
-    gsap.to(el.querySelector('.text-bottom'), {
-      yPercent: 0,
-      duration: 0.4,
-      ease: 'power2.out',
-    })
-  }
-
-
+        if (top && bottom && underline) {
+            gsap.to(top, { y: '0%', duration: 0.4, ease: 'power2.out' });
+            gsap.to(bottom, { y: '100%', duration: 0.4, ease: 'power2.out' });
+            gsap.to(underline, { width: '0%', duration: 0.3, ease: 'power2.out' });
+        }
+    };
 
     return (
         <div className="homeSections">
-
             <section className="sectionOne">
                 <h1>Unique Solutions —</h1>
                 <p>
-                    Functionally and strategically refined design by a brand identity studio that solves business challenges, drives growth, and is based on in‑depth analysis
+                    Functionally and strategically refined design by a brand identity studio that solves business challenges, drives growth, and is based on in‑depth analysis
                 </p>
             </section>
 
             <section className="sectionTwo">
                 <h2>Projects</h2>
                 <div className="projects">
-                    {
-                        projects.map((item) => (
-                            <div
-                                key={item.id}
-                                ref={el => boxesRef.current[item.id] = el!}
-                                className="project"
-                            >
-                                <img src={item.img} alt="" className="pImg"/>
-                                <div>{/* info block if needed */}</div>
-                            </div>
-                        ))
-                    }
+                    {projects.map((item) => (
+                        <div
+                            key={item.id}
+                            ref={(el) => (boxesRef.current[item.id] = el)}
+                            className="project"
+                        >
+                            <img src={item.img} alt="" className="pImg" />
+                            <div>{/* info block if needed */}</div>
+                        </div>
+                    ))}
                 </div>
                 <div className="layers">
                     <p>All Projects</p>
                     <img src="/Layer_1.svg" alt="" />
                 </div>
             </section>
-    <section ref={sectionRef} className="sectionThree px-6 py-12">
-      <p className="flex flex-wrap gap-3 text-lg font-medium leading-relaxed">
-        <span className="sectionTitle mr-3">Services</span>
-        {words.map((word, index) => (
-          <span className="group relative perspective-[1000px] inline-block word" key={index}>
-            <span className="block transition-transform duration-500 group-hover:rotateX-[-90deg] origin-bottom">
-              {word}
-            </span>
-            <span className="absolute top-0 left-0 block text-orange-500 rotateX-90 group-hover:rotateX-0 transition-transform duration-500 origin-top">
-              {word}
-            </span>
-            <span className="absolute bottom-0 left-0 h-[2px] bg-orange-500 w-0 group-hover:w-full transition-all duration-500"></span>
-          </span>
-        ))}
-      </p>
-    </section>
-    
+            <section ref={sectionRef} className="sectionThree px-6 py-12">
+                <p className="flex flex-wrap gap-4 text-lg font-medium leading-relaxed">
+                    <span className="sectionTitle mr-3">Services</span>
+                    {words.map((word, index) => (
+                        <span
+                            key={index}
+                            className="relative inline-block group overflow-hidden"
+                        >
+                            <span className="relative block">
+                                {word.split("").map((char, i) => (
+                                    <span
+                                        key={i}
+                                        className="inline-block transition-transform duration-300 ease-out group-hover:-translate-y-full delay-[calc(20ms*var(--char-index))]"
+                                        style={{ "--char-index": i } as React.CSSProperties}
+                                    >
+                                        {char}
+                                    </span>
+                                ))},
+                            </span>
+
+                            <span className="absolute top-0 left-0 text-[var(--orenge-color)] block pointer-events-none">
+                                {word.split("").map((char, i) => (
+                                    <span
+                                        key={i}
+                                        className="inline-block translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 delay-[calc(20ms*var(--char-index))]"
+                                        style={{ "--char-index": i } as React.CSSProperties}
+                                    >
+                                        {char}
+                                    </span>
+                                ))}
+                            </span>
+                            {/* underline */}
+                            <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] group-hover:w-[95%] transition-all duration-500"></span>
+                        </span>
+                    ))}
+                </p>
+            </section>
+
+            <section className="sectionFour">
+                <h2 className="sectionTitle">Clients</h2>
+                <div className="clients">
+                    {
+                        clients.map((item)=>{
+                            return <div className="client">
+                                <img src={item.url} alt="" />
+                            </div>
+                        })
+                    }
+                </div>
+            </section>
+
+            <section className="sectionFive">
+                <div className="">
+                    <img src="/image/Mask.png" alt="mask" />
+                </div>
+                <div className="sectionFive_texts">
+                    <h1>Fëdor Beltugov —</h1>
+                    <p>Founder and owner of Function Design Studio. Multidisciplinary designer & art director, focused on brand identity & UI/⁠UX design. Work experience: 17 years</p>
+                    <div className="links">
+                        <p>Get in touch with me through:</p>
+                        <img src="/whatsapp.svg" alt="" />
+                        <img src="/telegram.svg" alt="" />
+                        <img src="/linkedin.svg" alt="" />
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }
