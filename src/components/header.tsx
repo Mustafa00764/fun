@@ -92,7 +92,11 @@ export default function Header() {
         {navigate.map((item, i) => (
           <div key={item.id} className="relative">
             <span
-              ref={(el) => (textRefs.current[i] = el!)}
+              ref={(el) => {
+                if (el) {
+                    textRefs.current[i] = el;
+                }
+              }}
               className="navigate transition-all duration-300"
               style={{
                 background: 'var(--orenge-color)',
@@ -103,7 +107,11 @@ export default function Header() {
               <Link href={item.href}>{item.title}</Link>
             </span>
             <span
-              ref={(el) => (lineRefs.current[i] = el!)}
+              ref={(el) => {
+                if (el) {
+                    lineRefs.current[i] = el;
+                }
+              }}
               className="absolute bottom-0 left-0 h-[2px] bg-[var(--orenge-color)]"
               style={{ width: 0 }}
             />

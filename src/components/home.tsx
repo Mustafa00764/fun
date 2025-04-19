@@ -146,32 +146,6 @@ export default function HomeSection() {
         );
     }, []);
 
-    const handleMouseEnter = (index: number) => {
-        const wordEl = wordsRef.current[index];
-        const top = wordEl.querySelector('.top');
-        const bottom = wordEl.querySelector('.bottom');
-        const underline = underlineRefs.current[index];
-
-        if (top && bottom && underline) {
-            gsap.to(top, { y: '-100%', duration: 0.4, ease: 'power2.out' });
-            gsap.to(bottom, { y: '0%', duration: 0.4, ease: 'power2.out' });
-            gsap.to(underline, { width: '100%', duration: 0.3, ease: 'power2.out' });
-        }
-    };
-
-    const handleMouseLeave = (index: number) => {
-        const wordEl = wordsRef.current[index];
-        const top = wordEl.querySelector('.top');
-        const bottom = wordEl.querySelector('.bottom');
-        const underline = underlineRefs.current[index];
-
-        if (top && bottom && underline) {
-            gsap.to(top, { y: '0%', duration: 0.4, ease: 'power2.out' });
-            gsap.to(bottom, { y: '100%', duration: 0.4, ease: 'power2.out' });
-            gsap.to(underline, { width: '0%', duration: 0.3, ease: 'power2.out' });
-        }
-    };
-
     return (
         <div className="homeSections">
             <section className="sectionOne">
@@ -187,7 +161,11 @@ export default function HomeSection() {
                     {projects.map((item) => (
                         <div
                             key={item.id}
-                            ref={(el) => (boxesRef.current[item.id] = el)}
+                            ref={(el) => {
+                                if (el) {
+                                  boxesRef.current[item.id] = el;
+                                }
+                              }}
                             className="project"
                         >
                             <img src={item.img} alt="" className="pImg" />
