@@ -210,7 +210,7 @@ export default function HomeSection() {
                                 ))}
                             </span>
                             {/* underline */}
-                            <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] group-hover:w-[95%] transition-all duration-500"></span>
+                            <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] group-hover:w-[calc(100%-23px)] transition-all duration-500"></span>
                         </span>
                     ))}
                 </p>
