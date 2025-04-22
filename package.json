@@ -9,11 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pixi/filter-blur": "^7.4.3",
     "@pixi/filter-displacement": "^7.4.3",
+    "@pixi/filter-glow": "^5.2.1",
     "@react-three/drei": "^10.0.6",
     "@react-three/fiber": "^9.1.2",
+    "@types/gsap": "^1.20.2",
+    "curtainsjs": "^8.1.6",
+    "framer-motion": "^12.7.4",
     "gsap": "^3.12.7",
     "next": "15.3.0",
+    "pixi-filters": "^6.1.2",
     "pixi.js": "^8.9.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

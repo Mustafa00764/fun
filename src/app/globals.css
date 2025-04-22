@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 * {
-  cursor: none !important;
+  /* cursor: none !important; */
 }
 
 :root {
@@ -82,14 +82,217 @@
 
 body {
   font-family: Cera Pro, sans-serif;
-  height: 3100px;
   background-color: var(--background);
   position: relative;
+  overflow-x: hidden;
+}
+
+.button-container {
+  position: relative;
+  /* width: 100px;
+  height: 38px; */
+  /* overflow: hidden; */
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--orenge-color);
+  border-radius: 100px;
+}
+
+.button-container button {
+  /* height: 100%; */
+  border: none;
+  color: var(--background);
+  line-height: 34px;
+  font-size: 14px;
+  padding: 2px 20px;
+  background-color: var(--white-color);
+  border-radius: 100px;
+  -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+  mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+  -webkit-mask-size: 3000% 100%;
+  mask-size: 3000% 100%;
+  -webkit-animation: ani2 0.7s steps(29) forwards;
+  animation: ani2 0.7s steps(29) forwards;
+}
+
+.button-container button:hover {
+  -webkit-animation: ani 0.7s steps(29) forwards;
+  animation: ani 0.7s steps(29) forwards;
+}
+
+.mas {
+  position: absolute;
+  color: var(--background);
+  text-align: center;
+  width: 101%;
+  overflow: hidden;
+  line-height: 34px;
+  font-size: 14px;
+  padding: 2px 20px;
+}
+
+@-webkit-keyframes ani {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+  to {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+}
+
+@keyframes ani {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+  to {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+}
+
+@-webkit-keyframes ani2 {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+@keyframes ani2 {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+.mini_logo{
+  max-width: 69px;
+  width: 100%;
+  height: 40px;
+  display: none;
 }
 
 .logo{
-  width: 145px;
+  max-width: 145px;
+  width: 100%;
   height: 32px;
+}
+
+.menu_icon{
+  max-width: 25px;
+  width: 100%;
+  height: 18px;
+  display: none;
+  transition: all .2s;
+}
+
+.menu_active{
+  transform: rotate(90deg);
+  transition: all .2s;
+}
+
+.menu{
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  left: 0;
+  top: 100px;
+  padding: 31px 0 0 0;
+  padding-left: auto;
+  background-color: #000;
+  color: var(--white-color);
+}
+
+.menu_close{
+  transform: translateX(-100%);
+  transition: all .2s;
+}
+
+.menu_open{
+  transform: translateX(0);
+  transition: all .2s;
+}
+
+.menu_con{
+  margin: 0 auto;
+  width: 215px;
+}
+
+.menu_navbar{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.menu_navbar span{
+  font-family: Cera Pro Medium;
+  font-size: 33px;
+  line-height: 1em;
+  color: var(--white-color);
+  width: auto;
+}
+
+.menu_nav{
+  width: auto;
+}
+
+.menu_title{
+  font-family: Cera Pro Medium;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: -0.03em;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-underline-offset: 20%;
+  text-decoration-thickness: 0%;
+  text-decoration-skip-ink: auto;
+  color: var(--white-color);
+  margin-top: 80px;
+}
+
+.menu_con>.contact_via{
+  flex-direction: column;
+  align-items: start;
+}
+
+.menu_con>.contact_via p{
+  color: var(--grey-color);
+}
+
+.menu_via{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.menu_con .discover{
+  padding: 0;
+  width: 100%;
+  margin-top: 40px;
+  display: flex;
+}
+
+.menu_con .links{
+  flex-direction: column;
+  align-items: start;
+}
+
+.menu_icons{
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .header{
@@ -102,6 +305,7 @@ body {
   top: 0;
   z-index: 6;
   backdrop-filter: blur(100px);
+  transition: all .2s;
 }
 
 .navbar{
@@ -119,18 +323,9 @@ body {
   text-align: center;
 }
 
-.hBtn{
-  color: var(--background);
-  line-height: 34px;
-  font-size: 14px;
-  padding: 2px 20px;
-  background-color: var(--white-color);
-  border-radius: 100px;
-}
-
 .sectionOne{
-  height: 100vh;
   padding-top: 172px;
+  padding-bottom: 132px;
 }
 
 .sectionOne h1{
@@ -162,6 +357,7 @@ body {
   font-size: 30px;
   line-height: 1em;
   font-weight: 600;
+  font-family: Cera Pro Medium;
 }
 
 .projects{
@@ -228,6 +424,12 @@ body {
   font-weight: 600;
 }
 
+.animTitle{
+  font-family: Cera Pro Medium;
+  font-size: 3.75vw;
+  line-height: 4.5vw;
+}
+
 .sectionFour{
   padding: 200px 138px;
 }
@@ -260,8 +462,8 @@ body {
 
 .sectionFive_texts>p{
   font-weight: 400;
-  font-size: 30px;
-  line-height: 39px;
+  font-size: 2vw;
+  line-height: 2.7vw;
   letter-spacing: 0%;
   margin-top: 20px;
   max-width: 690px;
@@ -274,11 +476,21 @@ body {
   gap: 20px;
 }
 
+.icon{
+  color: var(--white-color);
+  transition: all .2s;
+}
+
+.icon:hover{
+  color: var(--orenge-color);
+  transition: all .2s;
+}
+
 .links p{
   font-weight: 400;
   font-size: 20px;
   line-height: 100%;
-  letter-spacing: -3%;
+  letter-spacing: -0.03em;
 }
 
 .footer{
@@ -298,6 +510,12 @@ body {
   text-decoration-style: solid;
   text-underline-offset: 22%;
   text-decoration-thickness: 7%;
+  transition: all .2s;
+}
+
+.footer>h1:hover{
+  color: var(--orenge-color);
+  transition: all .2s;
 }
 
 .contact_via{
@@ -320,12 +538,19 @@ body {
   font-size: 20px;
   line-height: 100%;
   letter-spacing: -0.03em;
+  transition: all .2s;
 }
+
+.contact_via_icon:hover .icon, .contact_via_icon:hover{
+  color: var(--orenge-color);
+  transition: all .2s;
+}
+
 
 .footer_form{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  padding: 64px 138px;
+  padding: 64px 108px;
 }
 
 .footer_form h1{
@@ -367,20 +592,29 @@ body {
   padding-top: 30px;
 }
 
-.footer_buttons button{
-  color: var(--background);
+.footer_buttons .button-container{
+  width: 112px;
+}
+
+.footer_buttons .button-container>.mas{
   font-size: 22px;
   line-height: 34px;
   letter-spacing: 0%;
-  background-color: var(--white-color);
+}
+
+.footer_buttons .button-container button{
+  width: 100%;
+  font-size: 22px;
+  line-height: 34px;
+  letter-spacing: 0%;
   padding: 10px 30px;
-  border-radius: 100px;
 }
 
 .discover{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   padding: 64px 138px;
+  align-items: center;
 }
 
 .discover p{
@@ -388,4 +622,372 @@ body {
   line-height: 100%;
   letter-spacing: -0.03em;  
   color: var(--grey-color);
+}
+
+@media screen and (max-width: 769px) {
+
+  .navbar{
+    gap: 30px;
+  }
+
+  .sectionOne{
+    padding: 136px 0 65px;
+  }
+
+  .sectionOne p{
+    margin-left: 0;
+    width: 100%;
+    padding: 0 10px;
+    font-size: 4.7vw;
+    line-height: 5.7vw;
+  }
+
+  .animTitle{
+    font-size: 4.7vw;
+    line-height: 5.7vw;
+  }
+
+  .sectionTwo{
+    padding: 0 10px;
+  }
+
+  .sectionTwo h2{
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .projects{
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .layers{
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .layers p{
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .layers img{
+    width: 80px;
+    height: 11px;
+  }
+
+  .sectionThree{
+    padding: 0 10px;
+    margin-top: 72px;
+    justify-content: start;
+  }
+
+  .sectionThree p{
+    margin: 0;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .sectionTitle{
+    font-family: Cera Pro Medium;
+    font-size: 20px;
+  }
+
+  .sectionFour{
+    padding: 100px 10px;
+
+  }
+
+  .clients{
+    margin-top: 30px;
+    gap: 7px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .clients img{
+    max-width: 143px;
+  }
+
+  .sectionFive{
+    gap: 10px;
+    padding: 0 73px;
+  }
+
+  .sectionFive_texts{
+    padding-top: 68px;
+  }
+  
+  .sectionFive_texts h1{
+    font-family: Cera Pro Medium, sans-serif;
+    font-size: 4.7vw;
+    line-height: 5.7vw;
+  }
+  
+  .sectionFive_texts>p{
+    max-width: 369px;
+    margin-bottom: 33px;
+    font-size: 2.6vw;
+    line-height: 3.38vw;
+  }
+
+  .links{
+    gap: 15px;
+  }
+
+  .links p{
+    font-size: 14px;
+  }
+
+  .icon svg{
+    width: 25px;
+    height: 25px;
+  }
+
+  .footer{
+    margin-top: 104px;
+    padding: 60px 37px;
+  }
+
+  .footer>h1{
+    font-size: 6.77vw;
+  }
+
+  .contact_via{
+    margin-top: 40px;
+    font-size: 14px;
+  }
+
+  .contact_via_icon{
+    font-size: 14px;
+  }
+
+  .footer_form{
+    padding: 64px 36px;
+  }
+
+  .footer_form > h1{
+    font-size: 4.7vw;
+    line-height: 5.7vw;
+  }
+
+  .Fform>input{
+    font-size: 17px;
+    max-width: 243px;
+    width: 100%;
+  }
+
+  .footer_buttons{
+    font-size: 9px;
+    line-height: 13px;
+    padding-top: 10px;
+  }
+  
+  .footer_buttons>p{
+    max-width: 213px;
+  }
+  
+  .footer_buttons .button-container{
+    width: 73px;
+  }
+  
+  .footer_buttons .button-container>.mas{
+    font-size: 14px;
+    line-height: 34px;
+  }
+  
+  .footer_buttons .button-container button{
+    width: 100%;
+    font-size: 14px;
+    line-height: 34px;
+    padding: 2px 20px;
+  }
+
+  .discover{
+    padding: 0 36px;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .discover>p{
+    font-size: 9px;
+  }
+
+}
+
+@media screen and (max-width: 640px) {
+
+  .mini_logo{
+    display: flex;
+  }
+
+  .logo{
+    display: none;
+  }
+  
+  .menu_icon{
+    display: flex;
+  }
+
+  .navbar{
+    display: none;
+  }
+
+}
+
+@media screen and (max-width: 431px) {
+
+  .mouse-follower{
+    display: none;
+  }
+
+  .sectionOne{
+    padding: 128px 0 50px;
+  }
+
+  .sectionOne p{
+    margin-left: 0;
+    width: 100%;
+    padding: 0 10px;
+    font-size: 5.8vw;
+    line-height: 7.2vw;
+  }
+  
+  .animTitle{
+    font-size: 5.8vw;
+    line-height: 7.2vw;
+  }
+
+  .sectionTwo{
+    padding: 0 10px;
+  }
+
+  .sectionTwo h2{
+    font-size: 16px;
+  }
+
+  .projects{
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .layers{
+    display: none;
+  }
+
+  .sectionThree{
+    margin-top: 80px;
+  }
+
+  .sectionThree p{
+    margin: 0;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .sectionTitle{
+    font-size: 16px;
+    margin-right: 0;
+  }
+
+  .sectionFour{
+    padding: 80px 10px;
+  }
+
+  .clients{
+    margin-top: 20px;
+    gap: 10px;
+    row-gap: 30px;
+  }
+
+  .clients img{
+    max-width: 130px;
+  }
+
+  .sectionFive{
+    padding: 0 45px;
+  }
+
+  .sectionFive_img{
+    max-width: 95px;
+    max-height: 95px;
+  }
+
+  .sectionFive_texts{
+    padding-top: 32px;
+  }
+  
+  .sectionFive_texts h1{
+    font-size: 5.8vw;
+    line-height: 7.2vw;
+  }
+  
+  .sectionFive_texts>p{
+    max-width: 235px;
+    margin-bottom: 30px;
+    font-size: 3.25vw;
+    line-height: 4.4vw;
+    margin-top: 10px;
+  }
+
+  .links{
+    gap: 15px;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .links p{
+    font-size: 12px;
+    width: 100%;
+  }
+
+
+  .footer{
+    margin-top: 80px;
+    padding: 50px 15px;
+  }
+
+  .contact_via{
+    margin-top: 20px;
+    font-size: 12px;
+  }
+
+  .contact_via_icon{
+    font-size: 12px;
+  }
+
+  .footer_form{
+    padding: 50px 30px;
+    display: flex;
+    gap: 36px;
+  }
+
+  .footer_form > h1{
+    font-size: 5.8vw;
+    line-height: 7.2vw;
+  }
+
+  .Fform>input{
+    font-size: 14px;
+    max-width: 200px;
+    width: 100%;
+  }
+
+  .footer_buttons{
+    font-size: 7px;
+    line-height: 10px;
+  }
+  
+  .footer_buttons>p{
+    max-width: 107px;
+  }
+
+  .discover{
+    padding: 0 30px;
+    align-items: start;
+  }
+
+  .discover>p{
+    font-size: 7px;
+  }
 }

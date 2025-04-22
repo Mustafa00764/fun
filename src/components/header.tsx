@@ -2,8 +2,9 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import gsap from 'gsap'
+import Menu from "./menu"
 
 interface Navigate {
   id: number
@@ -12,6 +13,7 @@ interface Navigate {
 }
 
 export default function Header() {
+  const [menu, setMenu] = useState<boolean>(false)
   const navigate: Navigate[] = [
     { id: 1, title: 'Projects', href: '' },
     { id: 2, title: 'Services', href: '' },
@@ -86,8 +88,9 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="header">
-      <Image src={'/logo_white.svg'} alt="logo" width={218} height={33} className="logo" />
+    <header className={`header ${menu?'bg-black':""}`}>
+      <Image src={'/mini_logo.svg'} alt="logo" width={69} height={40} className="mini_logo" />
+      <Image src={'/logo_white.svg'} alt="logo" width={218} height={32} className="logo" />
       <div className="navbar flex gap-10 relative">
         {navigate.map((item, i) => (
           <div key={item.id} className="relative">
@@ -117,8 +120,13 @@ export default function Header() {
             />
           </div>
         ))}
-        <button className="hBtn ml-4">Get Price</button>
+        <div className="button-container">
+          <span className="mas">Get Price</span>
+          <button type="button" name="Hover" className="">Get Price</button>
+        </div>
       </div>
+      <Image src={'/menu.svg'} alt="logo" onClick={()=>setMenu(!menu)} width={25} height={18} className={`menu_icon ${menu?"menu_active":""}`} />
+      <Menu open={menu}/>
     </header>
   )
 }

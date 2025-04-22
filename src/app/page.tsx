@@ -1,3 +1,4 @@
+import AnimatedWord from "@/components/anim";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import HomeSection from "@/components/home";
@@ -9,6 +10,8 @@ export default function Home() {
     <div className="home">
 
       <MouseFollower/>
+
+      {/* <AnimatedWord/> */}
 
       <Header/>
 

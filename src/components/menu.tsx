@@ -1,62 +1,145 @@
 'use client'
 
-const Footer = () => {
-    return (
-        <div className="footer">
-            <h1 className="footer_title">
-                hello@functionaldesign.studio
-            </h1>
-            <div className="contact_via">
-                <p>Contact via Messenger:</p>
-                <div className="contact_via_icon">
-                    <div className="icon">
-                        <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_1641_726)">
-                        <path d="M32.3992 26.6734C34.0423 24.002 34.9899 20.8669 34.9899 17.5C35 7.83266 27.1673 0 17.5 0C7.83266 0 0 7.83266 0 17.5C0 27.1673 7.83266 35 17.5 35C20.8669 35 24.002 34.0524 26.6734 32.4093L35 35L32.4093 26.6734H32.3992ZM13.3669 21.6331C8.60887 16.875 8.64919 12.6714 9.18347 11.2601C9.70766 9.85887 11.0786 8.94153 11.4113 8.94153C11.744 8.94153 12.2278 8.96169 12.6512 8.99194C13.0746 9.02218 13.3266 9.20363 13.5685 9.81855C13.8004 10.4335 14.4153 12.127 14.6976 12.8831C14.9798 13.6391 14.879 13.7903 14.7177 14.1129C14.5565 14.4355 13.9214 15.131 13.5887 15.4738C13.246 15.8165 13.3065 16.0383 13.4476 16.4113C13.5887 16.7843 14.7177 18.4677 15.625 19.375C16.5323 20.2823 18.2157 21.4113 18.5887 21.5524C18.9617 21.6935 19.1835 21.754 19.5262 21.4113C19.869 21.0685 20.5645 20.4335 20.8871 20.2823C21.2097 20.131 21.3609 20.0202 22.1169 20.3024C22.873 20.5847 24.5565 21.1996 25.1815 21.4315C25.7964 21.6633 25.9879 21.9153 26.0081 22.3488C26.0383 22.7722 26.0484 23.256 26.0585 23.5887C26.0585 23.9214 25.1512 25.2923 23.7399 25.8165C22.3387 26.3407 18.125 26.3911 13.3669 21.6331Z" fill="currentColor"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_1641_726">
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useRef } from "react"
+import gsap from 'gsap'
+
+interface Navigate {
+    id: number
+    title: string
+    href: string
+  }
+
+const Menu = ({open}:any) => {
+    const navigate: Navigate[] = [
+        { id: 1, title: 'Projects', href: '' },
+        { id: 2, title: 'Services', href: '' },
+        { id: 3, title: 'About', href: '' },
+        { id: 4, title: 'Contact Us', href: '' },
+        { id: 5, title: 'Get Price', href: '' }
+    ]
+
+    const textRefs = useRef<HTMLSpanElement[]>([])
+    
+    useEffect(() => {
+        textRefs.current.forEach((textEl, i) => {
+          if (!textEl) return
+    
+          const onMouseEnter = (e: MouseEvent) => {
+            const rect = textEl.getBoundingClientRect()
+            const offsetX = e.clientX - rect.left
+            const perc = (offsetX / rect.width) * 100
+    
+            gsap.fromTo(
+              textEl,
+              {
+                background: `linear-gradient(to right, #f97316 ${perc}%, #000 ${perc}%)`,
+              },
+              {
+                background: 'var(--orenge-color)',
+                duration: 0.5,
+                ease: 'power2.out',
+                onUpdate: () => {
+                  textEl.style.backgroundClip = 'text'
+                  textEl.style.webkitBackgroundClip = 'text'
+                  textEl.style.color = 'transparent'
+                },
+              }
+            )
+          }
+    
+          const onMouseLeave = () => {
+            gsap.to(textEl, {
+              background: 'var(--orenge-color)',
+              duration: 0.5,
+              onUpdate: () => {
+                textEl.style.backgroundClip = 'text'
+                textEl.style.webkitBackgroundClip = 'text'
+                textEl.style.color = 'var(--white-color)'
+              },
+            })
+          }
+    
+          textEl.addEventListener('mouseenter', onMouseEnter)
+          textEl.addEventListener('mousemove', onMouseEnter)
+          textEl.addEventListener('mouseleave', onMouseLeave)
+    
+          // Clean up
+          return () => {
+            textEl.removeEventListener('mouseenter', onMouseEnter)
+            textEl.removeEventListener('mousemove', onMouseEnter)
+            textEl.removeEventListener('mouseleave', onMouseLeave)
+          }
+        })
+    }, [])
+    
+  return (
+    <div className={`menu ${open?"menu_open":"menu_close"}`}>
+        <div className="menu_con">
+        <div className="menu_navbar">
+            {navigate.map((item, i) => (
+               <div key={item.id} className="relative menu_nav">
+                    <span
+                        ref={(el) => {
+                            if (el) {
+                                textRefs.current[i] = el;
+                            }
+                        }}
+                        className="navigate transition-all duration-300"
+                        style={{
+                            background: 'var(--orenge-color)',
+                            backgroundClip: 'text',
+                            WebkitBackgroundClip: 'text',
+                        }}
+                    >
+                        <Link href={item.href}>{item.title}</Link>
+                    </span>
+                </div>
+            ))}
+        </div>
+        <h1 className="menu_title">
+            hello@functionaldesign.studio
+        </h1>
+        <div className="contact_via">
+            <p>Contact via Messenger:</p>
+            <div className="menu_via">
+            <div className="contact_via_icon">
+                <div className="icon">
+                    <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clipPath="url(#clip0_1641_726)">
+                    <path d="M32.3992 26.6734C34.0423 24.002 34.9899 20.8669 34.9899 17.5C35 7.83266 27.1673 0 17.5 0C7.83266 0 0 7.83266 0 17.5C0 27.1673 7.83266 35 17.5 35C20.8669 35 24.002 34.0524 26.6734 32.4093L35 35L32.4093 26.6734H32.3992ZM13.3669 21.6331C8.60887 16.875 8.64919 12.6714 9.18347 11.2601C9.70766 9.85887 11.0786 8.94153 11.4113 8.94153C11.744 8.94153 12.2278 8.96169 12.6512 8.99194C13.0746 9.02218 13.3266 9.20363 13.5685 9.81855C13.8004 10.4335 14.4153 12.127 14.6976 12.8831C14.9798 13.6391 14.879 13.7903 14.7177 14.1129C14.5565 14.4355 13.9214 15.131 13.5887 15.4738C13.246 15.8165 13.3065 16.0383 13.4476 16.4113C13.5887 16.7843 14.7177 18.4677 15.625 19.375C16.5323 20.2823 18.2157 21.4113 18.5887 21.5524C18.9617 21.6935 19.1835 21.754 19.5262 21.4113C19.869 21.0685 20.5645 20.4335 20.8871 20.2823C21.2097 20.131 21.3609 20.0202 22.1169 20.3024C22.873 20.5847 24.5565 21.1996 25.1815 21.4315C25.7964 21.6633 25.9879 21.9153 26.0081 22.3488C26.0383 22.7722 26.0484 23.256 26.0585 23.5887C26.0585 23.9214 25.1512 25.2923 23.7399 25.8165C22.3387 26.3407 18.125 26.3911 13.3669 21.6331Z" fill="currentColor"/>
+                    </g>
+                    <defs>
+                    <clipPath id="clip0_1641_726">
+                    <rect width="35" height="35" fill="white"/>
+                    </clipPath>
+                    </defs>
+                    </svg>
+                </div>
+                <span>WhatsApp</span>
+            </div>
+            <div className="contact_via_icon">
+                <div className="icon">
+                    <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clipPath="url(#clip0_1641_724)">                        
+                        <path d="M17.5 0C7.83266 0 0 7.83266 0 17.5C0 27.1673 7.83266 35 17.5 35C27.1673 35 35 27.1673 35 17.5C35 7.83266 27.1673 0 17.5 0ZM26.3206 10.8871C25.9375 12.6915 25.5544 14.506 25.1613 16.3105C24.7177 18.377 24.2843 20.4536 23.8407 22.5202C23.5887 23.6996 23.3468 24.869 23.0847 26.0484C23.0343 26.2601 22.9738 26.4819 22.873 26.6734C22.6613 27.1169 22.3085 27.2782 21.8246 27.1472C21.5726 27.0766 21.3306 26.9657 21.119 26.8044C19.8891 25.8871 15.8266 22.873 13.4677 21.119C13.4778 21.0786 13.498 21.0282 13.5282 21.0081C16.2298 18.5383 18.9314 16.0585 21.6431 13.5887C21.9254 13.3266 22.2177 13.0645 22.5 12.8024C22.5504 12.752 22.6008 12.6915 22.6411 12.631C22.6915 12.5403 22.6613 12.4698 22.5706 12.4294C22.4294 12.379 22.2883 12.3992 22.1573 12.4597C22.0565 12.5101 21.9657 12.5706 21.8649 12.631C18.377 14.8286 14.879 17.0262 11.3911 19.2238C11.1996 19.3448 10.998 19.4657 10.8065 19.5867C10.746 19.627 10.6956 19.6371 10.6351 19.6069C9.0625 19.123 7.47984 18.6391 5.90726 18.1552C5.74597 18.1048 5.58468 18.0645 5.43347 17.9839C5.10081 17.8226 5.04032 17.5504 5.23185 17.2278C5.35282 17.0363 5.53427 16.9052 5.73589 16.8246C6.21976 16.623 6.70363 16.4214 7.1875 16.2399C10.1915 15.0806 13.1956 13.9214 16.1996 12.7621C19.1028 11.6431 22.0161 10.5141 24.9194 9.39516C25.0504 9.34476 25.1915 9.31452 25.3226 9.28427C25.8871 9.19355 26.25 9.67742 26.3306 10.0605C26.381 10.3327 26.3609 10.5948 26.3004 10.8569L26.3206 10.8871Z" fill="currentColor"/>
+                    </g>
+                    <defs>                        
+                        <clipPath id="clip0_1641_724">
                         <rect width="35" height="35" fill="white"/>
                         </clipPath>
-                        </defs>
-                        </svg>
-                    </div>
-                    <span>WhatsApp</span>
+                    </defs>
+                    </svg>
                 </div>
-                <div className="contact_via_icon">
-                    <div className="icon">
-                        <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_1641_724)">                        
-                            <path d="M17.5 0C7.83266 0 0 7.83266 0 17.5C0 27.1673 7.83266 35 17.5 35C27.1673 35 35 27.1673 35 17.5C35 7.83266 27.1673 0 17.5 0ZM26.3206 10.8871C25.9375 12.6915 25.5544 14.506 25.1613 16.3105C24.7177 18.377 24.2843 20.4536 23.8407 22.5202C23.5887 23.6996 23.3468 24.869 23.0847 26.0484C23.0343 26.2601 22.9738 26.4819 22.873 26.6734C22.6613 27.1169 22.3085 27.2782 21.8246 27.1472C21.5726 27.0766 21.3306 26.9657 21.119 26.8044C19.8891 25.8871 15.8266 22.873 13.4677 21.119C13.4778 21.0786 13.498 21.0282 13.5282 21.0081C16.2298 18.5383 18.9314 16.0585 21.6431 13.5887C21.9254 13.3266 22.2177 13.0645 22.5 12.8024C22.5504 12.752 22.6008 12.6915 22.6411 12.631C22.6915 12.5403 22.6613 12.4698 22.5706 12.4294C22.4294 12.379 22.2883 12.3992 22.1573 12.4597C22.0565 12.5101 21.9657 12.5706 21.8649 12.631C18.377 14.8286 14.879 17.0262 11.3911 19.2238C11.1996 19.3448 10.998 19.4657 10.8065 19.5867C10.746 19.627 10.6956 19.6371 10.6351 19.6069C9.0625 19.123 7.47984 18.6391 5.90726 18.1552C5.74597 18.1048 5.58468 18.0645 5.43347 17.9839C5.10081 17.8226 5.04032 17.5504 5.23185 17.2278C5.35282 17.0363 5.53427 16.9052 5.73589 16.8246C6.21976 16.623 6.70363 16.4214 7.1875 16.2399C10.1915 15.0806 13.1956 13.9214 16.1996 12.7621C19.1028 11.6431 22.0161 10.5141 24.9194 9.39516C25.0504 9.34476 25.1915 9.31452 25.3226 9.28427C25.8871 9.19355 26.25 9.67742 26.3306 10.0605C26.381 10.3327 26.3609 10.5948 26.3004 10.8569L26.3206 10.8871Z" fill="currentColor"/>
-                        </g>
-                        <defs>                        
-                            <clipPath id="clip0_1641_724">
-                            <rect width="35" height="35" fill="white"/>
-                            </clipPath>
-                        </defs>
-                        </svg>
-                    </div>
-                    <span>Telegram</span>
-                </div>
+                <span>Telegram</span>
             </div>
-            <div className="footer_form">
-                <h1>Order <br /> a service</h1>
-                <form className="Fform">
-                    <input required type="text" placeholder="Name"/>
-                    <input required type="tel" placeholder="Phone"/>
-                    <input required type="email" placeholder="Email"/>
-                    <div className="footer_buttons">
-                        <div className="button-container">
-                            <span className="mas">Send</span>
-                            <button type="button" name="Hover" id="footer_send">Send</button>
-                        </div>
-                        <p>By clicking on the «Send» button, I consent to the processing of personal data</p>
-                    </div>
-                </form>
             </div>
-            <div className="discover">
-                <div className="links">
-                    <p>Discover our work on:</p>
+        </div>
+        <div className="discover">
+            <div className="links">
+                <p>Discover our work on:</p>
+                <div className="menu_icons">
                     <div className="icon">
                         <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.5 2.25149C15.8352 2.25149 16.2369 2.26084 17.5542 2.32623C18.778 2.38229 19.432 2.58782 19.8804 2.75598C20.4596 2.98019 20.88 3.25112 21.3191 3.69021C21.7582 4.1293 22.0291 4.54036 22.2534 5.12892C22.4215 5.56801 22.6271 6.23132 22.6831 7.45516C22.7392 8.77242 22.7578 9.17414 22.7578 12.5093C22.7578 15.8445 22.7485 16.2463 22.6831 17.5635C22.6271 18.7874 22.4215 19.4413 22.2534 19.8898C22.0291 20.469 21.7582 20.8894 21.3191 21.3285C20.88 21.7676 20.469 22.0385 19.8804 22.2627C19.4413 22.4309 18.778 22.6364 17.5542 22.6925C16.2369 22.7485 15.8445 22.7672 12.5 22.7672C9.15546 22.7672 8.76308 22.7578 7.44581 22.6925C6.22197 22.6364 5.56801 22.4309 5.11958 22.2627C4.54036 22.0385 4.11996 21.7676 3.68087 21.3285C3.24178 20.8894 2.97085 20.4783 2.74664 19.8898C2.57848 19.4507 2.37294 18.7874 2.31689 17.5635C2.26084 16.2463 2.24215 15.8445 2.24215 12.5093C2.24215 9.17414 2.25149 8.77242 2.31689 7.45516C2.37294 6.23132 2.57848 5.57735 2.74664 5.12892C2.97085 4.5497 3.24178 4.1293 3.68087 3.69021C4.11996 3.25112 4.53102 2.98019 5.11958 2.75598C5.55867 2.58782 6.22197 2.38229 7.44581 2.32623C8.76308 2.27018 9.1648 2.25149 12.5 2.25149ZM12.5 0C9.0994 0 8.679 0.0186846 7.34305 0.0747384C6.0071 0.140135 5.1009 0.345665 4.3068 0.653961C3.48468 0.971599 2.78401 1.40135 2.09268 2.09268C1.40135 2.78401 0.971599 3.48468 0.653961 4.3068C0.345665 5.1009 0.130792 6.0071 0.0747384 7.34305C0.00934231 8.679 0 9.0994 0 12.5C0 15.9006 0.0186846 16.321 0.0747384 17.6569C0.140135 18.9929 0.345665 19.8991 0.653961 20.6932C0.971599 21.5153 1.40135 22.216 2.09268 22.9073C2.78401 23.5987 3.48468 24.0284 4.3068 24.346C5.1009 24.6543 6.0071 24.8692 7.34305 24.9253C8.679 24.9907 9.0994 25 12.5 25C15.9006 25 16.321 24.9813 17.6569 24.9253C18.9929 24.8599 19.8991 24.6543 20.6932 24.346C21.5153 24.0284 22.216 23.5987 22.9073 22.9073C23.5987 22.216 24.0284 21.5153 24.346 20.6932C24.6543 19.8991 24.8692 18.9929 24.9253 17.6569C24.9907 16.321 25 15.9006 25 12.5C25 9.0994 24.9813 8.679 24.9253 7.34305C24.8599 6.0071 24.6543 5.1009 24.346 4.3068C24.0284 3.48468 23.5987 2.78401 22.9073 2.09268C22.216 1.40135 21.5153 0.971599 20.6932 0.653961C19.8991 0.345665 18.9929 0.130792 17.6569 0.0747384C16.321 0.0093423 15.9006 0 12.5 0Z" fill="currentColor"/>
@@ -84,10 +167,11 @@ const Footer = () => {
                         </svg>
                     </div>
                 </div>
-                <p>© Functional Design Studio. All rights reserved</p>
             </div>
         </div>
-    )
+        </div>
+    </div>
+  )
 }
 
-export default Footer
+export default Menu
