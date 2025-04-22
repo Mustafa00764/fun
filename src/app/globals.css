@@ -962,7 +962,7 @@ body {
   .footer_form{
     padding: 50px 30px;
     display: flex;
-    gap: 20px;
+    gap: 10px;
   }
 
   .footer_form > h1{
@@ -970,10 +970,13 @@ body {
     line-height: 7.2vw;
   }
 
+  .br{
+    display: none;
+  }
+
   .Fform>input{
     font-size: 14px;
-    max-width: 200px;
-    width: 100%;
+    width: 200px;
   }
 
   .footer_buttons{

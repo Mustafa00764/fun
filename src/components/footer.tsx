@@ -40,7 +40,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className="footer_form">
-                <h1>Order <br /> a service</h1>
+                <h1>Order <br className="br"/> a service</h1>
                 <form className="Fform">
                     <input required type="text" placeholder="Name"/>
                     <input required type="tel" placeholder="Phone"/>
