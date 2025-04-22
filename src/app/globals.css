@@ -902,7 +902,7 @@ body {
   }
 
   .clients img{
-    max-width: 130px;
+    max-width: 30vw;
   }
 
   .sectionFive{
@@ -960,7 +960,7 @@ body {
   .footer_form{
     padding: 50px 30px;
     display: flex;
-    gap: 36px;
+    gap: 20px;
   }
 
   .footer_form > h1{
