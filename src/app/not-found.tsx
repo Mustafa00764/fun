@@ -1,13 +1,19 @@
 'use client'
 
 import Header from "@/components/header"
+import MouseFollower from "@/components/ui/MouseFollower"
+import Image from "next/image"
 
 export default function NotFound() {
     return (
         <div className="notFound">
+            <MouseFollower/>
             <Header/>
-            <div className="nfTitle">FWell, isn't this just f*ing great? How did you even get here?</div>
+            <div className="nfContainer">
+            <Image className="nfImage" src={'/image/404.png'} alt="404" width={1200} height={484}/>
+            <div className="nfTitle">Well, isn't this just f*ing great?<br className="br" /> How did you even get here?</div>
             <div className="nfText">Head back to the good stuff</div>
+            </div>
             <div className="nfLink">
                 <div className="discover">
                     <div className="links">

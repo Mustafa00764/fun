@@ -1,8 +1,67 @@
 'use client'
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Footer = () => {
+    const bgRef = useRef(null);
+    const footerImageRef = useRef(null); 
+    useEffect(() => {
+        gsap.set(footerImageRef.current, {
+            opacity: 0,
+            y: 100, // Начальное положение картинки
+            scale: 1.05, // Маленький масштаб
+        });
+      
+        ScrollTrigger.create({
+            trigger: footerImageRef.current, // Используем реф для картинки
+            start: "top 90%", // Анимация начинает играть, когда картинка входит в видимую область
+            end: "bottom top", // Когда картинка выходит из экрана
+            toggleActions: "play none none none", // Повторять анимацию при каждом скролле
+            onEnter: () => {
+              gsap.to(footerImageRef.current, {
+                opacity: 1,
+                y: 0, // Поднимаем картинку до нормального положения
+                scale: 1,
+                duration: 1.5,
+                ease: "power4.out",
+              });
+            },
+            onLeaveBack: () => {
+              gsap.to(footerImageRef.current, {
+                opacity: 0, // Исчезаем
+                y: 100, // Опускаем картинку вниз
+                scale: 1.05,
+                duration: 1,
+                ease: "power4.in",
+              });
+            },
+            onLeave: () => {
+              gsap.to(footerImageRef.current, {
+                opacity: 0, // Исчезаем
+                y: -100, // Опускаем картинку вверх
+                scale: 1.05,
+                duration: 1,
+                ease: "power4.in",
+              });
+            },
+            onEnterBack: () => {
+              gsap.to(footerImageRef.current, {
+                opacity: 1,
+                y: 0, // Поднимаем картинку обратно
+                scale: 1,
+                duration: 1.5,
+                ease: "power4.out",
+              });
+            },
+            markers: false, // Убираем метки для теста
+        });
+    }, []);
     return (
-        <div className="footer">
+        <div className="footer" >
             <h1 className="footer_title">
                 hello@functionaldesign.studio
             </h1>
@@ -86,6 +145,20 @@ const Footer = () => {
                 </div>
                 <p>© Functional Design Studio. All rights reserved</p>
             </div>
+            <div
+                ref={footerImageRef}
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundImage: "url('/image/footer-gradient.webp')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    zIndex: -1,
+                }}
+            />
         </div>
     )
 }

@@ -14,10 +14,10 @@ interface Navigate {
 const Menu = ({open}:any) => {
     const navigate: Navigate[] = [
         { id: 1, title: 'Projects', href: '' },
-        { id: 2, title: 'Services', href: '' },
+        { id: 2, title: 'Services', href: '/services' },
         { id: 3, title: 'About', href: '' },
         { id: 4, title: 'Contact Us', href: '' },
-        { id: 5, title: 'Get Price', href: '' }
+        { id: 5, title: 'Get Price', href: '/get-price' }
     ]
 
     const textRefs = useRef<HTMLSpanElement[]>([])

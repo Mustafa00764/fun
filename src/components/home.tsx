@@ -123,7 +123,7 @@ export default function HomeSection() {
                   >
                     {c}
                   </span>
-                ))},
+                ))}{idx<10?",":''}
               </span>
               <span className="absolute top-0 left-0 text-[var(--orenge-color)] block pointer-events-none">
                 {[...word.replace(/ /g, '\u00A0')].map((c, i) => (

@@ -16,7 +16,7 @@ export default function Header() {
   const [menu, setMenu] = useState<boolean>(false)
   const navigate: Navigate[] = [
     { id: 1, title: 'Projects', href: '' },
-    { id: 2, title: 'Services', href: '' },
+    { id: 2, title: 'Services', href: '/services' },
     { id: 3, title: 'About', href: '' },
     { id: 4, title: 'Contact Us', href: '' }
   ]
@@ -89,8 +89,10 @@ export default function Header() {
 
   return (
     <header className={`header ${menu?'bg-black':""}`}>
+      <Link href={'/'}>
       <Image src={'/mini_logo.svg'} alt="logo" width={69} height={40} className="mini_logo" />
       <Image src={'/logo_white.svg'} alt="logo" width={218} height={32} className="logo" />
+      </Link>
       <div className="navbar flex gap-10 relative">
         {navigate.map((item, i) => (
           <div key={item.id} className="relative">
@@ -120,10 +122,12 @@ export default function Header() {
             />
           </div>
         ))}
+        <Link href={'/get-price'}>
         <div className="button-container">
           <span className="mas">Get Price</span>
           <button type="button" name="Hover" className="">Get Price</button>
         </div>
+        </Link>
       </div>
       <Image src={'/menu.svg'} alt="logo" onClick={()=>setMenu(!menu)} width={25} height={18} className={`menu_icon ${menu?"menu_active":""}`} />
       <Menu open={menu}/>
