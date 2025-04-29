@@ -14,6 +14,19 @@ interface Navigate {
 
 export default function Header() {
   const [menu, setMenu] = useState<boolean>(false)
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    setCoords({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   const navigate: Navigate[] = [
     { id: 1, title: 'Projects', href: '' },
     { id: 2, title: 'Services', href: '/services' },
@@ -123,10 +136,28 @@ export default function Header() {
           </div>
         ))}
         <Link href={'/get-price'}>
-        <div className="button-container">
-          <span className="mas">Get Price</span>
-          <button type="button" name="Hover" className="">Get Price</button>
-        </div>
+          <button
+            ref={buttonRef}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative overflow-hidden rounded-full text-[var(--background)] bg-[var(--white-color)] px-5 py-[2px] text-[14px] leading-[34px]"
+          >
+            <span
+              className="absolute w-18 h-18 bg-[var(--orenge-color)] rounded-full transition-all duration-500 ease-out"
+              style={{
+                top: coords.y,
+                left: coords.x,
+                transform: `translate(-50%, -50%) scale(${isHovered ? 3 : 0})`,
+                opacity: isHovered ? 1 : 0,
+                pointerEvents: 'none',
+                zIndex: 0,
+              }}
+            />
+            <span className="relative z-10">
+              Get Price
+            </span>
+          </button>
         </Link>
       </div>
       <Image src={'/menu.svg'} alt="logo" onClick={()=>setMenu(!menu)} width={25} height={18} className={`menu_icon ${menu?"menu_active":""}`} />

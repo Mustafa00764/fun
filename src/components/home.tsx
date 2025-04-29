@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,8 +13,15 @@ interface Project { id: number; img: string; title: string; text: string; }
 interface Client { id: number; url: string; href: string; }
 
 export default function HomeSection() {
+  const [isClient, setIsClient] = useState(false); // To track if we're on the client side
   const boxesRef = useRef<(HTMLDivElement | null)[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  // Set client-side state once mounted
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const projects: Project[] = [
     { id: 1, img: '/image/p1.png', title: '', text: '' },
@@ -35,59 +44,81 @@ export default function HomeSection() {
     href: ''
   }));
 
+  const animationsRef = useRef<gsap.core.Tween[]>([]); // Store animations
 
   useEffect(() => {
-    // GSAP-эффекты
+    if (!isClient) return; // Avoid running the animations code on SSR
+
+    const animations: gsap.core.Tween[] = [];
 
     boxesRef.current.forEach((box, index) => {
       if (!box) return;
-      gsap.fromTo(box, { opacity: 0, y: 100, scale: 0.9 }, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        delay: index * 0.15,
-        ease: 'back.out(1.2)',
-        scrollTrigger: { trigger: box, start: 'top 90%', toggleActions: 'play none none reverse' }
-      });
+      const anim = gsap.fromTo(box, 
+        { opacity: 0, y: 100, scale: 0.9 }, 
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          delay: index * 0.15,
+          ease: 'back.out(1.2)',
+          scrollTrigger: { trigger: box, start: 'top 90%', toggleActions: 'play none none reverse' }
+        }
+      );
+      animations.push(anim);
     });
 
-    gsap.from('.sectionThree .word', {
-      opacity: 0,
-      y: 50,
-      rotationX: 90,
-      duration: 0.8,
-      stagger: 0.05,
-      ease: 'back.out(1.5)',
-      scrollTrigger: { trigger: '.sectionThree', start: 'top 80%' }
-    });
+    animations.push(
+      gsap.from('.sectionThree .word', {
+        opacity: 0,
+        y: 50,
+        rotationX: 90,
+        duration: 0.8,
+        stagger: 0.05,
+        ease: 'back.out(1.5)',
+        scrollTrigger: { trigger: '.sectionThree', start: 'top 80%' }
+      })
+    );
 
-    gsap.from('.sectionFour .client', {
-      opacity: 0,
-      scale: 0.5,
-      duration: 0.6,
-      stagger: { amount: 0.8, grid: 'auto', from: 'center' },
-      scrollTrigger: { trigger: '.sectionFour', start: 'top 80%' }
-    });
+    animations.push(
+      gsap.from('.sectionFour .client', {
+        opacity: 0,
+        scale: 0.5,
+        duration: 0.6,
+        stagger: { amount: 0.8, grid: 'auto', from: 'center' },
+        scrollTrigger: { trigger: '.sectionFour', start: 'top 80%' }
+      })
+    );
 
-    gsap.from('.sectionFive > div:first-child', {
-      opacity: 0,
-      x: -100,
-      duration: 1,
-      scrollTrigger: { trigger: '.sectionFive', start: 'top 80%' }
-    });
-    gsap.from('.sectionFive_texts', {
-      opacity: 0,
-      x: 100,
-      duration: 1,
-      delay: 0.3,
-      scrollTrigger: { trigger: '.sectionFive', start: 'top 80%' }
-    });
+    animations.push(
+      gsap.from('.sectionFive > div:first-child', {
+        opacity: 0,
+        x: -100,
+        duration: 1,
+        scrollTrigger: { trigger: '.sectionFive', start: 'top 80%' }
+      })
+    );
+
+    animations.push(
+      gsap.from('.sectionFive_texts', {
+        opacity: 0,
+        x: 100,
+        duration: 1,
+        delay: 0.3,
+        scrollTrigger: { trigger: '.sectionFive', start: 'top 80%' }
+      })
+    );
+
+    animationsRef.current = animations;
 
     return () => {
-      ScrollTrigger.killAll();
+      animationsRef.current.forEach((anim) => {
+        anim.scrollTrigger?.kill();
+        anim.kill();
+      });
     };
-  }, []);
+  }, [isClient, pathname]);
+
 
   return (
     <div className="homeSections">
@@ -109,7 +140,7 @@ export default function HomeSection() {
         <div className="layers mt-4"><p>All Projects</p><img src="/Layer_1.svg" alt="layer" /></div>
       </section>
 
-      <section ref={sectionRef} className="sectionThree px-6 py-12">
+      <section ref={sectionRef} className="sectionThree">
         <p className="flex flex-wrap gap-4 text-lg font-medium leading-relaxed">
           <span className="sectionTitle mr-3">Services</span>
           {words.map((word, idx) => (

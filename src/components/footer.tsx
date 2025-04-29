@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -7,61 +7,46 @@ import Image from "next/image";
 gsap.registerPlugin(ScrollTrigger);
 
 const Footer = () => {
-    const bgRef = useRef(null);
-    const footerImageRef = useRef(null); 
+    const [coords, setCoords] = useState({ x: 0, y: 0 });
+    const [isHovered, setIsHovered] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [hasAppeared, setHasAppeared] = useState('');
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!buttonRef.current) return;
+        const rect = buttonRef.current.getBoundingClientRect();
+        setCoords({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
     useEffect(() => {
-        gsap.set(footerImageRef.current, {
-            opacity: 0,
-            y: 100, // Начальное положение картинки
-            scale: 1.05, // Маленький масштаб
-        });
-      
-        ScrollTrigger.create({
-            trigger: footerImageRef.current, // Используем реф для картинки
-            start: "top 90%", // Анимация начинает играть, когда картинка входит в видимую область
-            end: "bottom top", // Когда картинка выходит из экрана
-            toggleActions: "play none none none", // Повторять анимацию при каждом скролле
-            onEnter: () => {
-              gsap.to(footerImageRef.current, {
-                opacity: 1,
-                y: 0, // Поднимаем картинку до нормального положения
-                scale: 1,
-                duration: 1.5,
-                ease: "power4.out",
-              });
-            },
-            onLeaveBack: () => {
-              gsap.to(footerImageRef.current, {
-                opacity: 0, // Исчезаем
-                y: 100, // Опускаем картинку вниз
-                scale: 1.05,
-                duration: 1,
-                ease: "power4.in",
-              });
-            },
-            onLeave: () => {
-              gsap.to(footerImageRef.current, {
-                opacity: 0, // Исчезаем
-                y: -100, // Опускаем картинку вверх
-                scale: 1.05,
-                duration: 1,
-                ease: "power4.in",
-              });
-            },
-            onEnterBack: () => {
-              gsap.to(footerImageRef.current, {
-                opacity: 1,
-                y: 0, // Поднимаем картинку обратно
-                scale: 1,
-                duration: 1.5,
-                ease: "power4.out",
-              });
-            },
-            markers: false, // Убираем метки для теста
-        });
-    }, []);
+        const threshold = 0.92; // 50% от высоты страницы
+    
+        const handleScroll = () => {
+          const scrollPosition = window.scrollY;
+          const documentHeight = document.documentElement.scrollHeight;
+          const windowHeight = window.innerHeight;
+    
+          const scrollPercent = scrollPosition / (documentHeight - windowHeight);
+    
+          // Когда прокрутка достигает порога (threshold), показываем элемент
+          if (scrollPercent >= threshold) {
+            setHasAppeared("bgActive")
+          } else {
+            setHasAppeared("bgNone")
+          }
+        };
+    
+        window.addEventListener('scroll', handleScroll);
+    
+        // Очистка слушателя событий при размонтировании
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, [hasAppeared]);
     return (
-        <div className="footer" >
+        <div className={`footer`} >
+            <div className={`footerBg ${hasAppeared}`}>
+                <Image src={'/image/footer-gradient.webp'} className={`animateElement`} alt="footerBg" width={1440} height={300} />
+            </div>
             <h1 className="footer_title">
                 hello@functionaldesign.studio
             </h1>
@@ -105,10 +90,28 @@ const Footer = () => {
                     <input required type="tel" placeholder="Phone"/>
                     <input required type="email" placeholder="Email"/>
                     <div className="footer_buttons">
-                        <div className="button-container">
-                            <span className="mas">Send</span>
-                            <button type="button" name="Hover" id="footer_send">Send</button>
-                        </div>
+                        <button
+                            ref={buttonRef}
+                            onMouseMove={handleMouseMove}
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                            className="relative max-[769px]:min-w-[73px] min-w-[112px] max-[769px]:text-[14px] max-[769px]:py-[2px] max-[769px]:px-5 overflow-hidden rounded-full text-[var(--background)] bg-[var(--white-color)] px-[30px] py-[10px] text-[22px] leading-[34px]"
+                        >
+                            <span
+                                className="absolute w-19 h-19 bg-[var(--orenge-color)] rounded-full transition-all duration-500 ease-out"
+                                style={{
+                                    top: coords.y,
+                                    left: coords.x,
+                                    transform: `translate(-50%, -50%) scale(${isHovered ? 3 : 0})`,
+                                    opacity: isHovered ? 1 : 0,
+                                    pointerEvents: 'none',
+                                    zIndex: 0,
+                                }}
+                            />
+                            <span className="relative z-10">
+                                Send
+                            </span>
+                        </button>
                         <p>By clicking on the «Send» button, I consent to the processing of personal data</p>
                     </div>
                 </form>
@@ -145,20 +148,6 @@ const Footer = () => {
                 </div>
                 <p>© Functional Design Studio. All rights reserved</p>
             </div>
-            <div
-                ref={footerImageRef}
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    backgroundImage: "url('/image/footer-gradient.webp')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    zIndex: -1,
-                }}
-            />
         </div>
     )
 }

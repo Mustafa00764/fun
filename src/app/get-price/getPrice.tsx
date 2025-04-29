@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from './getPrice.module.css'
 import MouseFollower from '@/components/ui/MouseFollower'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 interface Btns {
     id: number,
@@ -13,6 +13,31 @@ interface Btns {
 export function GetPrice() {
     const [brand, setBrand] = useState<string>('')
     const [offer, setOffer] = useState<string>('')
+
+    const [coords, setCoords] = useState({ x: 0, y: 0 });
+    const [isHovered, setIsHovered] = useState(false);
+    const [coords2, setCoords2] = useState({ x: 0, y: 0 });
+    const [isHovered2, setIsHovered2] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const buttonRef2 = useRef<HTMLButtonElement>(null);
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!buttonRef.current) return;
+        const rect = buttonRef.current.getBoundingClientRect();
+        setCoords({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
+
+    const handleMouseMove2 = (e: React.MouseEvent) => {
+        if (!buttonRef2.current) return;
+        const rect = buttonRef2.current.getBoundingClientRect();
+        setCoords2({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
 
     const branding: Btns[] = [
         {
@@ -66,10 +91,29 @@ export function GetPrice() {
             <Image src={'/mini_black_logo.svg'} alt="logo" width={69} height={40} className="mini_logo" />
             <Image src={'/logo_black.svg'} alt="logo" width={218} height={32} className="logo" />
             <Link href={'/'}>
-            <div className={`${styles.btns} button-container`}>
-                <span className="mas">Closed</span>
-                <button type="button" name="Hover" className="">Closed</button>
-            </div>
+                <button
+                    ref={buttonRef}
+                    onMouseMove={handleMouseMove}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    className="relative overflow-hidden rounded-full text-[var(--background)] bg-[var(--white-color)] px-5 py-[2px] text-[14px] leading-[34px]"
+                    
+                 >
+                    <span
+                        className="absolute w-17 h-17 bg-[var(--orenge-color)] rounded-full transition-all duration-500 ease-out"
+                        style={{
+                            top: coords.y,
+                            left: coords.x,
+                            transform: `translate(-50%, -50%) scale(${isHovered ? 3 : 0})`,
+                            opacity: isHovered ? 1 : 0,
+                            pointerEvents: 'none',
+                            zIndex: 0,
+                        }}
+                    />
+                    <span className="relative z-10">
+                        Closed
+                    </span>
+                </button>
             </Link>
         </header>
         <div className={styles.forms}>
@@ -108,10 +152,28 @@ export function GetPrice() {
                     <input required type="tel" placeholder="Phone"/>
                     <input required type="email" placeholder="Email"/>
                     <div className={styles.gp_buttons}>
-                        <div className="button-container">
-                            <span className="mas">Send</span>
-                            <button type="button" name="Hover" id="footer_send">Send</button>
-                        </div>
+                        <button
+                            ref={buttonRef2}
+                            onMouseMove={handleMouseMove2}
+                            onMouseEnter={() => setIsHovered2(true)}
+                            onMouseLeave={() => setIsHovered2(false)}
+                            className="relative max-[769px]:min-w-[73px] min-w-[112px] max-[769px]:text-[14px] max-[769px]:py-[2px] max-[769px]:px-5 overflow-hidden rounded-full text-[var(--background)] bg-[var(--white-color)] px-[30px] py-[10px] text-[22px] leading-[34px]"
+                        >
+                            <span
+                                className="absolute w-19 h-19 bg-[var(--orenge-color)] rounded-full transition-all duration-500 ease-out"
+                                style={{
+                                    top: coords2.y,
+                                    left: coords2.x,
+                                    transform: `translate(-50%, -50%) scale(${isHovered2 ? 3 : 0})`,
+                                    opacity: isHovered2 ? 1 : 0,
+                                    pointerEvents: 'none',
+                                    zIndex: 0,
+                                }}
+                            />
+                            <span className="relative z-10">
+                                Send
+                            </span>
+                        </button>
                         <p>By clicking on the «Send» button, I consent to the processing of personal data</p>
                     </div>
                 </form>

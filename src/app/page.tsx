@@ -2,12 +2,13 @@ import AnimatedWord from "@/components/anim";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import HomeSection from "@/components/home";
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import MouseFollower from "@/components/ui/MouseFollower";
 
 export default function Home() {
 
   return (
-    <div className="home">
+    <div className="home cursor-none">
 
       <MouseFollower/>
 
@@ -15,7 +16,9 @@ export default function Home() {
 
       <Header/>
 
-      <HomeSection/>
+      <SmoothScrollProvider>
+        <HomeSection/>
+      </SmoothScrollProvider>
 
       <Footer/>
 
