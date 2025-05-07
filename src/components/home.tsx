@@ -124,6 +124,8 @@ export default function HomeSection() {
   return (
     <div className="homeSections">
       <section className="sectionOne ">
+        <h1>Unique <br />
+        Solutions —</h1>
         <div className='effects'>
         <ImprovedBlurEffect/>
         </div>

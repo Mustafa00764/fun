@@ -137,6 +137,7 @@ body {
   padding-left: auto;
   background-color: #000;
   color: var(--white-color);
+  z-index: 10;
 }
 
 .menu_close{
@@ -258,6 +259,7 @@ body {
   line-height: 15.4vw;
   letter-spacing: -0.03em;
   color: var(--orenge-color);
+  display: none;
 }
 
 .effects{
@@ -679,6 +681,10 @@ body {
 
 @media screen and (max-width: 769px) {
 
+  .effects{
+    display: none;
+  }
+
   .nfContainer{
     padding: 58px 73px 0;
   }
@@ -700,6 +706,10 @@ body {
 
   .sectionOne{
     padding: 36px 0 65px;
+  }
+
+  .sectionOne h1{
+    display: flex;
   }
 
   .sectionOne p{

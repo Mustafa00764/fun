@@ -81,7 +81,7 @@ export default function ImprovedBlurEffect() {
 
       // Создаем геометрию для текста
       // const aspectRatio = canvas.width / canvas.height
-      const planeWidth = Math.min(window.innerWidth, 1600)
+      const planeWidth = Math.min(window.innerWidth, 4000)
       const planeHeight = canvas.height * 2.8
 
       const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight)
@@ -104,8 +104,10 @@ export default function ImprovedBlurEffect() {
         uniforms: {
           tDiffuse: { value: null },
           resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-          mousePos: { value: new THREE.Vector2(0.5, 0.5) },
-          mouseRadius: { value: 0.5 }, // Радиус эффекта размытия
+          mousePos: { value: new THREE.Vector2(1.0, 0.0) },
+          // mouseRadius: { value: 0.4 }, // Радиус эффекта размытия
+          mouseRadiusX: { value: 0.3 }, // Ширина эффекта (по горизонтали)
+          mouseRadiusY: { value: 0.8 },
           blurStrength: { value: 0.65 }, // Сила размытия
           time: { value: 0.0 },
         },
@@ -118,133 +120,139 @@ export default function ImprovedBlurEffect() {
     }
   `,
     fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform vec2 resolution;
-    uniform vec2 mousePos;
-    uniform float mouseRadius;
-    uniform float blurStrength;
-    uniform float time;
+uniform sampler2D tDiffuse;
+uniform vec2 resolution;
+uniform vec2 mousePos;
+// uniform float mouseRadius;
+uniform float mouseRadiusX; // Вместо mouseRadius
+uniform float mouseRadiusY;
+uniform float blurStrength;
+uniform float time;
+
+varying vec2 vUv;
+
+// Функция для размытия по Гауссу
+vec4 gaussianBlur(sampler2D tex, vec2 uv, vec2 direction) {
+  // Веса для 40-точечного размытия по Гауссу
+  float weights[40];
+  weights[0]  = 0.00001;
+  weights[1]  = 0.00004;
+  weights[2]  = 0.0001;
+  weights[3]  = 0.0003;
+  weights[4]  = 0.0007;
+  weights[5]  = 0.0015;
+  weights[6]  = 0.0029;
+  weights[7]  = 0.0052;
+  weights[8]  = 0.0088;
+  weights[9]  = 0.0139;
+  weights[10] = 0.0205;
+  weights[11] = 0.0287;
+  weights[12] = 0.0383;
+  weights[13] = 0.0487;
+  weights[14] = 0.0587;
+  weights[15] = 0.0668;
+  weights[16] = 0.0719;
+  weights[17] = 0.0735;
+  weights[18] = 0.0719;
+  weights[19] = 0.0668;
+  weights[20] = 0.0587;
+  weights[21] = 0.0487;
+  weights[22] = 0.0383;
+  weights[23] = 0.0287;
+  weights[24] = 0.0205;
+  weights[25] = 0.0139;
+  weights[26] = 0.0088;
+  weights[27] = 0.0052;
+  weights[28] = 0.0029;
+  weights[29] = 0.0015;
+  weights[30] = 0.0007;
+  weights[31] = 0.0003;
+  weights[32] = 0.0001;
+  weights[33] = 0.00004;
+  weights[34] = 0.00001;
+  weights[35] = 0.000002;
+  weights[36] = 0.000001;
+  weights[37] = 0.0000005;
+  weights[38] = 0.0000002;
+  weights[39] = 0.0000001;
+
+  vec4 result = vec4(0.0);
+
+  for (int i = -20; i <= 20; i++) {
+    vec2 offset = float(i) * direction;
+    result += texture2D(tex, uv + offset) * weights[i + 20];
+  }
+
+  return result;
+}
+
+void main() {
+  // Получаем цвет из текстуры
+  vec4 texColor = texture2D(tDiffuse, vUv);
+  
+  // Расстояние от текущего пикселя до позиции мыши
+  vec2 screenUv = gl_FragCoord.xy / resolution;
+  vec2 diff = screenUv - mousePos;
+  
+  // Нормализуем расстояние для эллипса
+  float normalizedDist = sqrt(
+    (diff.x * diff.x) / (mouseRadiusX * mouseRadiusX) + 
+    (diff.y * diff.y) / (mouseRadiusY * mouseRadiusY)
+  );
+  
+  // Если пиксель находится вне эллипса, используем оригинальный цвет
+  if (normalizedDist > 1.0) {
+    gl_FragColor = texColor;
+    return;
+  }
+  
+  // Сила эффекта зависит от расстояния до курсора (более плавное затухание)
+  // Используем smoothstep для более плавного перехода на границах
+  float strength = smoothstep(1.0, 0.65, normalizedDist) * blurStrength;
+  
+  // Направление размытия - от центра курсора
+  vec2 dir = normalize(diff);
+  
+  // Применяем размытие по Гауссу в направлении от курсора
+  vec2 blurDirection = dir * strength * -0.002;
+  vec4 blurColor = gaussianBlur(tDiffuse, vUv, blurDirection);
+  
+  // Добавляем эффект растягивания текста
+  vec4 stretchedColor = vec4(0.0);
+  
+  // Количество сэмплов для эффекта растягивания
+  const int numSamples = 40;
+  
+  for (int i = 0; i < numSamples; i++) {
+    float t = float(i) / float(numSamples - 1);
     
-    varying vec2 vUv;
+    // Смещение в направлении от курсора
+    vec2 offset = dir * strength * t * 0.025;
     
-    // Функция для размытия по Гауссу
-    vec4 gaussianBlur(sampler2D tex, vec2 uv, vec2 direction) {
-      // Веса для 40-точечного размытия по Гауссу
-float weights[40];
-weights[0]  = 0.00001;
-weights[1]  = 0.00004;
-weights[2]  = 0.0001;
-weights[3]  = 0.0003;
-weights[4]  = 0.0007;
-weights[5]  = 0.0015;
-weights[6]  = 0.0029;
-weights[7]  = 0.0052;
-weights[8]  = 0.0088;
-weights[9]  = 0.0139;
-weights[10] = 0.0205;
-weights[11] = 0.0287;
-weights[12] = 0.0383;
-weights[13] = 0.0487;
-weights[14] = 0.0587;
-weights[15] = 0.0668;
-weights[16] = 0.0719;
-weights[17] = 0.0735;
-weights[18] = 0.0719;
-weights[19] = 0.0668;
-weights[20] = 0.0587;
-weights[21] = 0.0487;
-weights[22] = 0.0383;
-weights[23] = 0.0287;
-weights[24] = 0.0205;
-weights[25] = 0.0139;
-weights[26] = 0.0088;
-weights[27] = 0.0052;
-weights[28] = 0.0029;
-weights[29] = 0.0015;
-weights[30] = 0.0007;
-weights[31] = 0.0003;
-weights[32] = 0.0001;
-weights[33] = 0.00004;
-weights[34] = 0.00001;
-weights[35] = 0.000002;
-weights[36] = 0.000001;
-weights[37] = 0.0000005;
-weights[38] = 0.0000002;
-weights[39] = 0.0000001;
-
-
-      vec4 result = vec4(0.0);
-
-      for (int i = -20; i <= 20; i++) {
-        vec2 offset = float(i) * direction;
-        result += texture2D(tex, uv + offset) * weights[i + 20];
-      }
-
-      return result;
-    }
-
+    // Добавляем небольшую волну для 3D эффекта
+    // offset.x += sin(time * 1.5 + vUv.y * 8.0) * 0.02 * strength;
+    // offset.y += cos(time * 1.2 + vUv.x * 6.0) * 0.02 * strength;
     
-    void main() {
-      // Получаем цвет из текстуры
-      vec4 texColor = texture2D(tDiffuse, vUv);
-      
-      // Расстояние от текущего пикселя до позиции мыши
-      vec2 screenUv = gl_FragCoord.xy / resolution;
-      float dist = distance(screenUv, mousePos);
-      
-      // Если пиксель находится вне радиуса действия курсора, используем оригинальный цвет
-      if (dist < 0.0) {
-        gl_FragColor = texColor;
-        return;
-      }
-      
-      // Сила эффекта зависит от расстояния до курсора (более плавное затухание)
-      // Используем smoothstep для более плавного перехода на границах
-      float strength = smoothstep(mouseRadius, mouseRadius * 0.7, dist) * blurStrength;
-      
-      // Направление размытия - от центра курсора
-      vec2 dir = normalize(screenUv - mousePos);
-      
-      // Применяем размытие по Гауссу в направлении от курсора
-      vec2 blurDirection = dir * strength * -0.002;
-      vec4 blurColor = gaussianBlur(tDiffuse, vUv, blurDirection);
-      
-      // Добавляем эффект растягивания текста
-      vec4 stretchedColor = vec4(0.0);
-      
-      // Количество сэмплов для эффекта растягивания
-      const int numSamples = 40;
-      
-      for (int i = 0; i < numSamples; i++) {
-        float t = float(i) / float(numSamples - 1);
-        
-        // Смещение в направлении от курсора
-        vec2 offset = dir * strength * t * 0.025;
-        
-        // Добавляем небольшую волну для 3D эффекта
-        // offset.x += sin(time * 1.5 + vUv.y * 8.0) * 0.02 * strength;
-        // offset.y += cos(time * 1.2 + vUv.x * 6.0) * 0.02 * strength;
-        
-        // Сэмплируем текстуру со смещением
-        vec4 sampleColor = texture2D(tDiffuse, vUv - offset);
-        
-        // Добавляем к общему цвету с затуханием
-        stretchedColor += sampleColor * (1.0 - t * 0.1);
-      }
-      
-      // Нормализуем цвет
-      stretchedColor /= float(numSamples) * 0.9;
-      
-      // Смешиваем размытие и растягивание
-      vec4 finalColor = mix(blurColor, stretchedColor, 0.7);
-      
-      // Добавляем прозрачность для курсора
-      finalColor.a *= 1.5; // Делаем эффект более прозрачным
-      
-      // Плавно смешиваем с оригинальным цветом на границе
-      float edgeFactor = smoothstep(mouseRadius * 0.8, mouseRadius, dist);
-      gl_FragColor = mix(finalColor, texColor, edgeFactor);
-    }
+    // Сэмплируем текстуру со смещением
+    vec4 sampleColor = texture2D(tDiffuse, vUv - offset);
+    
+    // Добавляем к общему цвету с затуханием
+    stretchedColor += sampleColor * (1.0 - t * 0.1);
+  }
+  
+  // Нормализуем цвет
+  stretchedColor /= float(numSamples) * 0.9;
+  
+  // Смешиваем размытие и растягивание
+  vec4 finalColor = mix(blurColor, stretchedColor, 0.7);
+  
+  // Добавляем прозрачность для курсора
+  finalColor.a *= 1.5; // Делаем эффект более прозрачным
+  
+  // Плавно смешиваем с оригинальным цветом на границе
+  float edgeFactor = smoothstep(0.8, 1.0, normalizedDist);
+  gl_FragColor = mix(finalColor, texColor, edgeFactor);
+}
   `,
       }
 
@@ -260,82 +268,99 @@ weights[39] = 0.0000001;
       const blurGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight)
       const blurMesh = new THREE.Mesh(blurGeometry, blurMaterial)
       blurScene.add(blurMesh)
-
+      // console.log(blurGeometry, blurMesh, window.innerWidth, window.innerHeight);
+      
       // Создаем визуализацию курсора (полупрозрачный круг)
-      const cursorRadius = Math.min(window.innerWidth, window.innerHeight) * blurShader.uniforms.mouseRadius.value
+      const cursorRadius = Math.min(window.innerWidth, window.innerHeight)
       const cursorGeometry = new THREE.CircleGeometry(cursorRadius, 32)
       const cursorMaterial = new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0, // Очень прозрачный
+        color: 0xffffff,
+        transparent: false,
+        opacity: 1, // Очень прозрачный
         depthTest: false,
         blending: THREE.AdditiveBlending,
       })
       const cursor = new THREE.Mesh(cursorGeometry, cursorMaterial)
-      cursor.position.z = -1 // Поверх всего
+      cursor.position.z = 1 // Поверх всего
       scene.add(cursor)
 
       // Обработчик движения мыши
       const onMouseMove = (event: MouseEvent) => {
-        // Получаем точные координаты внутри canvas
-        const rect = renderer.domElement.getBoundingClientRect();
+        const mouseX = event.clientX
+        const mouseY = event.clientY
         
-        // Ограничиваем координаты размерами canvas
-        const mouseX = Math.max(0, Math.min(event.clientX - rect.left, rect.width));
-        const mouseY = Math.max(0, Math.min(event.clientY - rect.top, rect.height));
       
-        // Для шейдера (нормализованные 0..1)
-        const shaderX = mouseX / rect.width;
-        const shaderY = 1.0 - (mouseY / rect.height); // Инвертируем Y
-        
-        blurMaterial.uniforms.mousePos.value.set(shaderX, shaderY);
+        // Нормализованные координаты для шейдера (от 0 до 1)
+        const normalizedX = mouseX / window.innerWidth * 2
+        const normalizedY = 2.35 - mouseY / canvas.height * 4 // Инвертируем Y для соответствия WebGL координатам
+            
+        // Устанавливаем позицию для шейдера
+        blurMaterial.uniforms.mousePos.value.set(normalizedX, normalizedY)
       
-        // Для визуального курсора Three.js
-        cursor.position.set(
-          (mouseX - rect.width/2),  // Центрируем (0,0) в середине canvas
-          (rect.height/2 - mouseY), // Инвертируем Y
-          10  // Поверх всего
-        );
+        // Преобразуем координаты мыши в координаты сцены для визуального курсора
+        // Учитываем, что (0,0) в THREE.js находится в центре экрана
+        const sceneX = mouseX - window.innerWidth / 2
+        const sceneY = -mouseY + window.innerHeight / 2
+      
+        // Устанавливаем позицию курсора точно в координатах мыши
+        cursor.position.x = sceneX
+        cursor.position.y = sceneY
       };
       
       window.addEventListener("mousemove", onMouseMove)
 
       // Обработчик изменения размера окна
       const onResize = () => {
-        const width = window.innerWidth
-        const height = window.innerHeight
-
-        renderer.setSize(width, height)
-
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+      
+        renderer.setSize(width, height);
+      
         // Обновляем камеру
-        camera.left = -width / 2
-        camera.right = width / 2
-        camera.top = height / 2
-        camera.bottom = -height / 2
-        camera.updateProjectionMatrix()
-
+        camera.left = -width / 2;
+        camera.right = width / 2;
+        camera.top = height / 2;
+        camera.bottom = -height / 2;
+        camera.updateProjectionMatrix();
+      
         // Обновляем размер плоскости
-        const newPlaneWidth = Math.min(width, 1600)
-        const newPlaneHeight = newPlaneWidth *  2.5
-
-        textMesh.geometry.dispose()
-        const newGeometry = new THREE.PlaneGeometry(newPlaneWidth, newPlaneHeight)
-        textMesh.geometry = newGeometry
-
+        const newPlaneWidth = Math.min(width, 4000);
+        const newPlaneHeight = canvas.height * 2.8;
+      
+        textMesh.geometry.dispose();
+        const newGeometry = new THREE.PlaneGeometry(newPlaneWidth, newPlaneHeight);
+        textMesh.geometry = newGeometry;
+      
         // Обновляем размер квада для эффекта размытия
-        blurMesh.geometry.dispose()
-        blurMesh.geometry = new THREE.PlaneGeometry(width, height)
-
+        blurMesh.geometry.dispose();
+        blurMesh.geometry = new THREE.PlaneGeometry(width, height);
+      
         // Обновляем размер курсора
-        cursor.geometry.dispose()
-        const newCursorRadius = Math.min(width, height) * blurShader.uniforms.mouseRadius.value
-        cursor.geometry = new THREE.CircleGeometry(newCursorRadius, 32)
-
+        cursor.geometry.dispose();
+        
+        // Используем круговую геометрию с максимальным радиусом
+        // и применяем масштабирование для создания эллипса
+        const maxRadius = Math.max(
+          width * blurShader.uniforms.mouseRadiusX.value,
+          height * blurShader.uniforms.mouseRadiusY.value
+        );
+        
+        // Создаем круговую геометрию
+        const circleGeometry = new THREE.CircleGeometry(maxRadius, 32);
+        cursor.geometry = circleGeometry;
+        
+        // Применяем масштабирование для создания эллипса
+        const scaleX = blurShader.uniforms.mouseRadiusX.value / Math.max(blurShader.uniforms.mouseRadiusX.value, blurShader.uniforms.mouseRadiusY.value);
+        const scaleY = blurShader.uniforms.mouseRadiusY.value / Math.max(blurShader.uniforms.mouseRadiusX.value, blurShader.uniforms.mouseRadiusY.value);
+        
+        cursor.scale.set(scaleX, scaleY, 1);
+      
         // Обновляем рендер-таргет
-        renderTarget.setSize(width * window.devicePixelRatio, height * window.devicePixelRatio)
+        renderTarget.setSize(width * window.devicePixelRatio, height * window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight, false);
+        
         // Обновляем разрешение в шейдерах
-        blurMaterial.uniforms.resolution.value.set(width, height)
+        blurMaterial.uniforms.resolution.value.set(width, height);
       }
 
       window.addEventListener("resize", onResize)
