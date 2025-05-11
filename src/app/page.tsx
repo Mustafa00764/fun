@@ -12,8 +12,6 @@ export default function Home() {
 
       <MouseFollower/>
 
-      {/* <AnimatedWord/> */}
-
       <Header/>
 
       <SmoothScrollProvider>
