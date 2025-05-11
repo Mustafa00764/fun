@@ -304,6 +304,7 @@ export default function DualDirectionBlur({
       const { width, height } = containerRef.current.getBoundingClientRect()
       setDimensions({ width, height })
     }
+    
 
     window.addEventListener("resize", updateDimensions)
     return () => window.removeEventListener("resize", updateDimensions)
