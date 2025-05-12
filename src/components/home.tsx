@@ -50,7 +50,6 @@ export default function HomeSection() {
 
   useEffect(() => {
     if (!isClient) return; // Avoid running the animations code on SSR
-    setFontSize(window.innerWidth / 100 * 18.75)
     const animations: gsap.core.Tween[] = [];
 
     boxesRef.current.forEach((box, index) => {
@@ -112,14 +111,17 @@ export default function HomeSection() {
     );
 
     animationsRef.current = animations;
-
     return () => {
       animationsRef.current.forEach((anim) => {
         anim.scrollTrigger?.kill();
         anim.kill();
       });
     };
-  }, [isClient, pathname, fontSize]);
+  }, [isClient, pathname]);
+
+  useEffect(()=> {
+    setFontSize(window.innerWidth / 100 * 18.75)
+  },[fontSize])
 
   const textRefs = useRef<HTMLSpanElement[]>([])
   const lineRefs = useRef<HTMLSpanElement[]>([])
@@ -218,7 +220,7 @@ export default function HomeSection() {
           {
             words.map((item, idx) => {
               return(
-                <span key={idx} className="relative animTitle inline-block group overflow-hidden ">
+                <span key={idx} className="relative animTitlev word inline-block group overflow-hidden ">
                 <span
                   ref={(el) => {
                     if (el) {
