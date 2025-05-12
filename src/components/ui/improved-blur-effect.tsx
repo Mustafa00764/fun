@@ -2,24 +2,23 @@
 
 import { useEffect, useRef, useState } from "react"
 
-interface DualDirectionBlurProps {
-  text?: string
-  fontSize?: number
-  color?: string
-}
-
-export default function DualDirectionBlur({
-  text = "Unique Solutions —",
-  fontSize = window.innerWidth / 100 * 18.75,
-  color = "#FF3F1A",
-}: DualDirectionBlurProps) {
+export default function DualDirectionBlur({text, fontSize, color}:any) {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [dynamicFontSize, setDynamicFontSize] = useState(fontSize)
   const animationFrameRef = useRef<number | null>(null)
   const textImageRef = useRef<HTMLImageElement | null>(null)
   const isImageLoadedRef = useRef(false)
+
+  const updateFontSize = () => {
+    if (containerRef.current) {
+      const { width } = containerRef.current.getBoundingClientRect()
+      const newFontSize = Math.min(width / 100 * 18.75, fontSize) // Пример пропорционального уменьшения
+      setDynamicFontSize(newFontSize)
+    }
+  }
 
   // Создание изображения текста
   const createTextImage = () => {
@@ -37,7 +36,7 @@ export default function DualDirectionBlur({
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     // Отрисовка текста с нужным шрифтом
-    ctx.font = `bold ${fontSize}px Cera Pro Medium, sans-serif`
+    ctx.font = `bold ${dynamicFontSize}px Cera Pro Medium, sans-serif`
     ctx.fillStyle = color
     ctx.textAlign = "left"
     ctx.textBaseline = "middle"
@@ -46,8 +45,8 @@ export default function DualDirectionBlur({
     // Разделение текста на строки по пробелам, если нужно
     const words = text.split(" ")
     if (words.length > 1) {
-      ctx.fillText(words[0], xOffset, canvas.height / 2 - fontSize * 0.25)
-      ctx.fillText(words.slice(1).join(" "), xOffset, canvas.height / 2 + fontSize * 0.6)
+      ctx.fillText(words[0], xOffset, canvas.height / 2 - dynamicFontSize * 0.25)
+      ctx.fillText(words.slice(1).join(" "), xOffset, canvas.height / 2 + dynamicFontSize * 0.6)
     } else {
       ctx.fillText(text, xOffset, canvas.height / 2)
     }
@@ -244,7 +243,7 @@ export default function DualDirectionBlur({
         cancelAnimationFrame(animationFrameRef.current)
       }
     }
-  }, [dimensions, text, color, fontSize])
+  }, [dimensions, dynamicFontSize, text, color, fontSize])
 
   // Отслеживание позиции мыши
   useEffect(() => {
@@ -289,7 +288,7 @@ export default function DualDirectionBlur({
         container.removeEventListener("touchmove", handleTouchMove)
       }
     }
-  }, [])
+  }, [fontSize])
 
   // Обновление размеров при изменении окна
   useEffect(() => {
@@ -298,18 +297,20 @@ export default function DualDirectionBlur({
 
       const { width, height } = containerRef.current.getBoundingClientRect()
       setDimensions({ width, height })
+      updateFontSize()  
     }
 
     // Установка начальных размеров
     if (containerRef.current) {
       const { width, height } = containerRef.current.getBoundingClientRect()
       setDimensions({ width, height })
+      updateFontSize()
     }
 
 
     window.addEventListener("resize", updateDimensions)
     return () => window.removeEventListener("resize", updateDimensions)
-  }, [])
+  }, [fontSize])
 
   return (
     <div

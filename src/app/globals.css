@@ -77,7 +77,7 @@ canvas{
   z-index: 9999;
   pointer-events: none;
   background-position: center;
-  transition: width .2s, height .2s, top .2s, left .2s;
+  transition: width .25s, height .25s, top .25s, left .25s;
 }
 
 .mouse-follower.hovered {
@@ -90,7 +90,7 @@ canvas{
   background-position: center;
   top: -27.5px;
   left: -27.5px;
-  transition: width .2s, height .2s, top .2s, left .2s, background-image .2s;
+  transition: width .25s, height .25s, top .25s, left .25s;
 }
 
 body {

@@ -14,7 +14,8 @@ interface Project { id: number; img: string; title: string; text: string; }
 interface Client { id: number; url: string; href: string; }
 
 export default function HomeSection() {
-  const [isClient, setIsClient] = useState(false); // To track if we're on the client side
+  const [isClient, setIsClient] = useState(false);
+  const [fontSize, setFontSize] = useState<any>(0) // To track if we're on the client side
   const boxesRef = useRef<(HTMLDivElement | null)[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function HomeSection() {
 
   useEffect(() => {
     if (!isClient) return; // Avoid running the animations code on SSR
-
+    setFontSize(window.innerWidth / 100 * 18.75)
     const animations: gsap.core.Tween[] = [];
 
     boxesRef.current.forEach((box, index) => {
@@ -118,7 +119,7 @@ export default function HomeSection() {
         anim.kill();
       });
     };
-  }, [isClient, pathname]);
+  }, [isClient, pathname, fontSize]);
 
   const textRefs = useRef<HTMLSpanElement[]>([])
   const lineRefs = useRef<HTMLSpanElement[]>([])
@@ -193,7 +194,7 @@ export default function HomeSection() {
         <h1 className='sectionOne_title'>Unique <br />
         Solutions —</h1>
         <div className='effects'>
-          <DualDirectionBlur/>
+          <DualDirectionBlur text={"Unique Solutions —"}  fontSize={fontSize} color={"#FF3F1A"} />
         </div>
         <p>Functionally and strategically refined design by a brand identity studio that solves business challenges, drives growth, and is based on in‑depth analysis</p>
       </section>
