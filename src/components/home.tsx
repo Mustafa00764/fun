@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import ImprovedBlurEffect from './ui/improved-blur-effect';
+import DualDirectionBlur from './ui/improved-blur-effect';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -193,7 +193,7 @@ export default function HomeSection() {
         <h1 className='sectionOne_title'>Unique <br />
         Solutions —</h1>
         <div className='effects'>
-          <ImprovedBlurEffect/>
+          <DualDirectionBlur/>
         </div>
         <p>Functionally and strategically refined design by a brand identity studio that solves business challenges, drives growth, and is based on in‑depth analysis</p>
       </section>
