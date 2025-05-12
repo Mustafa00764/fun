@@ -42,6 +42,7 @@ export default function DualDirectionBlur({
     ctx.textAlign = "left"
     ctx.textBaseline = "middle"
     const xOffset = 0
+
     // Разделение текста на строки по пробелам, если нужно
     const words = text.split(" ")
     if (words.length > 1) {
@@ -84,7 +85,7 @@ export default function DualDirectionBlur({
     const backSamples = 20
     const maxFrontOffset = 80
     const maxBackOffset = 80
-    const fadeStart = 0.1
+    const fadeStart = 0.05
 
     // Создание временных холстов для переднего и заднего размытия
     const frontCanvas = document.createElement("canvas")
@@ -253,7 +254,7 @@ export default function DualDirectionBlur({
       const rect = containerRef.current.getBoundingClientRect()
       mousePosition.current = {
         x: e.clientX - rect.left,
-        y: e.clientY - rect.top / 2,
+        y: e.clientY - rect.top,
       }
     }
 
@@ -304,7 +305,7 @@ export default function DualDirectionBlur({
       const { width, height } = containerRef.current.getBoundingClientRect()
       setDimensions({ width, height })
     }
-    
+
 
     window.addEventListener("resize", updateDimensions)
     return () => window.removeEventListener("resize", updateDimensions)
@@ -313,7 +314,7 @@ export default function DualDirectionBlur({
   return (
     <div
       ref={containerRef}
-      className="w-full h-[500px] relative"
+      className="w-full h-[34.7vw] relative"
       aria-label={`Interactive text display: ${text}`}
       role="img"
     >

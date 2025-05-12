@@ -73,7 +73,7 @@ const Services = () => {
             <main className="main">
                 <section className={styles.sectionSOne}>
                     <div className="sectionOne">
-                        <h1 className="sectionOne_title" >Services —</h1>
+                        <h1 className="" >Services —</h1>
                         <p className={styles.s_hover_titles}>
                             {
                                 words.map((item, index)=>{

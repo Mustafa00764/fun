@@ -11,6 +11,97 @@ const Footer = () => {
     const [isHovered, setIsHovered] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [hasAppeared, setHasAppeared] = useState('');
+    const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
+    const [submitted, setSubmitted] = useState(false);
+
+    const validate = (form: HTMLFormElement & {
+        name: { value: string };
+        phone: { value: string };
+        email: { value: string };
+    }) => {
+        const name = form.name.value.trim();
+        const phone = form.phone.value.trim();
+        const email = form.email.value.trim();
+    
+        const newErrors: typeof errors = {};
+    
+        // Валидация имени (только буквы, без цифр и спецсимволов)
+        if (!/^[A-Za-zА-Яа-яЁё\s]+$/.test(name)) {
+          newErrors.name = 'Имя должно содержать только буквы';
+        }
+    
+        // Валидация телефона (строго по маске)
+        if (!/^\+7 \(\d{3}\) \d{3} \d{2} \d{2}$/.test(phone)) {
+          newErrors.phone = 'Введите номер в формате +7 (999) 999 99 99';
+        }
+    
+        // Валидация email
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          newErrors.email = 'Введите корректный email';
+        }
+    
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.currentTarget as HTMLFormElement & {
+            name: { value: string };
+            phone: { value: string };
+            email: { value: string };
+          };
+    
+        if (validate(form)) {
+          const data = {
+            name: form.name.value,
+            phone: form.phone.value,
+            email: form.email.value,
+          };
+          console.log('Данные отправлены:', data);
+          setSubmitted(true);
+          form.reset();
+        }
+    };
+    
+    const handlePhoneInput = (e: React.FormEvent<HTMLInputElement>) => {
+        let value = e.currentTarget.value.replace(/\D/g, ''); // удаляем всё, кроме цифр
+      
+        // Убираем ведущую 8 или 7 (если пользователь её ввёл)
+        if (value.startsWith('8')) value = value.slice(1);
+        if (value.startsWith('7')) value = value.slice(1);
+      
+        // Ограничиваем длину 10 цифрами после +7
+        if (value.length > 10) value = value.slice(0, 10);
+      
+        let formatted = '+7';
+      
+        if (value.length > 0) {
+          formatted += ' (' + value.slice(0, 3);
+        }
+        if (value.length >= 4) {
+          formatted += ') ' + value.slice(3, 6);
+        }
+        if (value.length >= 7) {
+          formatted += ' ' + value.slice(6, 8);
+        }
+        if (value.length >= 9) {
+          formatted += ' ' + value.slice(8, 10);
+        }
+      
+        e.currentTarget.value = formatted;
+    };
+      
+    const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+      
+        // Оставляем только буквы (латиница и кириллица)
+        const cleanValue = value.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '');
+      
+        e.target.value = cleanValue;
+    };
+    
+
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!buttonRef.current) return;
         const rect = buttonRef.current.getBoundingClientRect();
@@ -85,13 +176,14 @@ const Footer = () => {
             </div>
             <div className="footer_form">
                 <h1>Order <br className="br"/> a service</h1>
-                <form className="Fform">
-                    <input required type="text" placeholder="Name"/>
-                    <input required type="tel" placeholder="Phone"/>
+                <form className="Fform" onSubmit={handleSubmit} >
+                    <input name="name"   onInput={handleNameInput} required type="text" placeholder="Name"/>
+                    <input name="phone" onInput={handlePhoneInput} required type="tel" placeholder="+7 (XXX) XXX XX XX"/>
                     <input required type="email" placeholder="Email"/>
                     <div className="footer_buttons">
                         <button
                             ref={buttonRef}
+                            value="Submit"
                             onMouseMove={handleMouseMove}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
@@ -120,14 +212,14 @@ const Footer = () => {
                 <div className="links">
                     <p>Discover our work on:</p>
                     <div className="icon">
-                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="35" height="35" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.5 2.25149C15.8352 2.25149 16.2369 2.26084 17.5542 2.32623C18.778 2.38229 19.432 2.58782 19.8804 2.75598C20.4596 2.98019 20.88 3.25112 21.3191 3.69021C21.7582 4.1293 22.0291 4.54036 22.2534 5.12892C22.4215 5.56801 22.6271 6.23132 22.6831 7.45516C22.7392 8.77242 22.7578 9.17414 22.7578 12.5093C22.7578 15.8445 22.7485 16.2463 22.6831 17.5635C22.6271 18.7874 22.4215 19.4413 22.2534 19.8898C22.0291 20.469 21.7582 20.8894 21.3191 21.3285C20.88 21.7676 20.469 22.0385 19.8804 22.2627C19.4413 22.4309 18.778 22.6364 17.5542 22.6925C16.2369 22.7485 15.8445 22.7672 12.5 22.7672C9.15546 22.7672 8.76308 22.7578 7.44581 22.6925C6.22197 22.6364 5.56801 22.4309 5.11958 22.2627C4.54036 22.0385 4.11996 21.7676 3.68087 21.3285C3.24178 20.8894 2.97085 20.4783 2.74664 19.8898C2.57848 19.4507 2.37294 18.7874 2.31689 17.5635C2.26084 16.2463 2.24215 15.8445 2.24215 12.5093C2.24215 9.17414 2.25149 8.77242 2.31689 7.45516C2.37294 6.23132 2.57848 5.57735 2.74664 5.12892C2.97085 4.5497 3.24178 4.1293 3.68087 3.69021C4.11996 3.25112 4.53102 2.98019 5.11958 2.75598C5.55867 2.58782 6.22197 2.38229 7.44581 2.32623C8.76308 2.27018 9.1648 2.25149 12.5 2.25149ZM12.5 0C9.0994 0 8.679 0.0186846 7.34305 0.0747384C6.0071 0.140135 5.1009 0.345665 4.3068 0.653961C3.48468 0.971599 2.78401 1.40135 2.09268 2.09268C1.40135 2.78401 0.971599 3.48468 0.653961 4.3068C0.345665 5.1009 0.130792 6.0071 0.0747384 7.34305C0.00934231 8.679 0 9.0994 0 12.5C0 15.9006 0.0186846 16.321 0.0747384 17.6569C0.140135 18.9929 0.345665 19.8991 0.653961 20.6932C0.971599 21.5153 1.40135 22.216 2.09268 22.9073C2.78401 23.5987 3.48468 24.0284 4.3068 24.346C5.1009 24.6543 6.0071 24.8692 7.34305 24.9253C8.679 24.9907 9.0994 25 12.5 25C15.9006 25 16.321 24.9813 17.6569 24.9253C18.9929 24.8599 19.8991 24.6543 20.6932 24.346C21.5153 24.0284 22.216 23.5987 22.9073 22.9073C23.5987 22.216 24.0284 21.5153 24.346 20.6932C24.6543 19.8991 24.8692 18.9929 24.9253 17.6569C24.9907 16.321 25 15.9006 25 12.5C25 9.0994 24.9813 8.679 24.9253 7.34305C24.8599 6.0071 24.6543 5.1009 24.346 4.3068C24.0284 3.48468 23.5987 2.78401 22.9073 2.09268C22.216 1.40135 21.5153 0.971599 20.6932 0.653961C19.8991 0.345665 18.9929 0.130792 17.6569 0.0747384C16.321 0.0093423 15.9006 0 12.5 0Z" fill="currentColor"/>
                         <path d="M12.4963 6.07812C8.94621 6.07812 6.07812 8.95555 6.07812 12.4963C6.07812 16.037 8.95555 18.9144 12.4963 18.9144C16.037 18.9144 18.9144 16.037 18.9144 12.4963C18.9144 8.95555 16.037 6.07812 12.4963 6.07812ZM12.4963 16.6723C10.1981 16.6723 8.32962 14.8038 8.32962 12.5056C8.32962 10.2074 10.1981 8.33896 12.4963 8.33896C14.7945 8.33896 16.663 10.2074 16.663 12.5056C16.663 14.8038 14.7945 16.6723 12.4963 16.6723Z" fill="currentColor"/>
                         <path d="M19.1682 7.32853C19.9989 7.32853 20.6723 6.65512 20.6723 5.82442C20.6723 4.99373 19.9989 4.32031 19.1682 4.32031C18.3375 4.32031 17.6641 4.99373 17.6641 5.82442C17.6641 6.65512 18.3375 7.32853 19.1682 7.32853Z" fill="currentColor"/>
                         </svg>
                     </div>
                     <div className="icon">
-                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="35" height="35" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M8.31148 13.6094H5.78906V15.8515H8.27412C10.5443 15.8515 10.4042 13.6094 8.31148 13.6094Z" fill="currentColor"/>
                         <path d="M8.23369 9.15625H5.80469V11.3891H8.46724C10.3357 11.3891 10.6253 9.15625 8.23369 9.15625Z" fill="currentColor"/>
                         <path d="M17.342 11.2188C16.2489 11.2188 15.651 11.7886 15.4922 12.8723H19.1824C19.1077 11.7232 18.3416 11.2188 17.342 11.2188Z" fill="currentColor"/>
@@ -135,7 +227,7 @@ const Footer = () => {
                         </svg>
                     </div>
                     <div className="icon">
-                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="35" height="35" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9.75501 14.132C10.9415 13.1604 12.0906 12.5532 13.221 12.3009C13.0528 11.8992 12.8847 11.5442 12.7259 11.2266C10.764 11.8525 8.65262 12.1608 6.3731 12.1608C5.92467 12.1608 5.59769 12.1608 5.38281 12.1421C5.38281 12.1888 5.38281 12.2449 5.38281 12.3103C5.38281 12.3757 5.38281 12.4317 5.38281 12.4784C5.38281 14.2535 5.98072 15.823 7.17653 17.1683C7.71839 16.0939 8.58722 15.0756 9.77369 14.1133L9.75501 14.132Z" fill="currentColor"/>
                         <path d="M10.4964 15.2034C9.43139 16.1282 8.64664 17.0905 8.13281 18.1088C9.42205 19.1084 10.8701 19.6129 12.4863 19.6129C13.3271 19.6129 14.1679 19.4541 14.9994 19.1365C14.7752 17.1933 14.3268 15.3061 13.6635 13.4844C12.6171 13.7086 11.5614 14.2878 10.4964 15.2127V15.2034Z" fill="currentColor"/>
                         <path d="M17.0358 7.0099C15.7186 5.91685 14.2051 5.375 12.4955 5.375C11.9163 5.375 11.337 5.45908 10.7578 5.6179C11.7574 6.6549 12.6823 7.94413 13.5418 9.49496C15.0926 8.85034 16.2604 8.01887 17.0452 7.01925L17.0358 7.0099Z" fill="currentColor"/>

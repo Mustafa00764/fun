@@ -120,14 +120,80 @@ export default function HomeSection() {
     };
   }, [isClient, pathname]);
 
+  const textRefs = useRef<HTMLSpanElement[]>([])
+  const lineRefs = useRef<HTMLSpanElement[]>([])
+
+  useEffect(() => {
+    textRefs.current.forEach((textEl, i) => {
+      const lineEl = lineRefs.current[i]
+      if (!textEl || !lineEl) return
+
+      const onMouseEnter = (e: MouseEvent) => {
+        const rect = textEl.getBoundingClientRect()
+        const offsetX = e.clientX - rect.left
+        const perc = (offsetX / rect.width) * 100
+
+        gsap.fromTo(
+          textEl,
+          {
+            background: `linear-gradient(to right, #f97316 ${perc}%, #000 ${perc}%)`,
+          },
+          {
+            background: 'var(--orenge-color)',
+            duration: 0.5,
+            ease: 'power2.out',
+            onUpdate: () => {
+              textEl.style.backgroundClip = 'text'
+              textEl.style.webkitBackgroundClip = 'text'
+              textEl.style.color = 'transparent'
+            },
+          }
+        )
+
+        gsap.to(lineEl, {
+          width: '100%',
+          duration: 0.4,
+          ease: 'power2.out',
+        })
+      }
+
+      const onMouseLeave = () => {
+        gsap.to(textEl, {
+          background: 'var(--orenge-color)',
+          duration: 0.5,
+          onUpdate: () => {
+            textEl.style.backgroundClip = 'text'
+            textEl.style.webkitBackgroundClip = 'text'
+            textEl.style.color = 'var(--white-color)'
+          },
+        })
+        gsap.to(lineEl, {
+          width: 0,
+          duration: 0.5,
+        })
+      }
+
+      textEl.addEventListener('mouseenter', onMouseEnter)
+      textEl.addEventListener('mousemove', onMouseEnter)
+      textEl.addEventListener('mouseleave', onMouseLeave)
+
+      // Clean up
+      return () => {
+        textEl.removeEventListener('mouseenter', onMouseEnter)
+        textEl.removeEventListener('mousemove', onMouseEnter)
+        textEl.removeEventListener('mouseleave', onMouseLeave)
+      }
+    })
+  }, [])
+
 
   return (
     <div className="homeSections">
       <section className="sectionOne ">
-        <h1>Unique <br />
+        <h1 className='sectionOne_title'>Unique <br />
         Solutions —</h1>
         <div className='effects'>
-        <ImprovedBlurEffect/>
+          <ImprovedBlurEffect/>
         </div>
         <p>Functionally and strategically refined design by a brand identity studio that solves business challenges, drives growth, and is based on in‑depth analysis</p>
       </section>
@@ -147,7 +213,40 @@ export default function HomeSection() {
       <section ref={sectionRef} className="sectionThree">
         <p className="flex flex-wrap gap-4 text-lg font-medium leading-relaxed">
           <span className="sectionTitle mr-3">Services</span>
-          {words.map((word, idx) => (
+
+          {
+            words.map((item, idx) => {
+              return(
+                <span key={idx} className="relative animTitle inline-block group overflow-hidden ">
+                <span
+                  ref={(el) => {
+                    if (el) {
+                        textRefs.current[idx] = el;
+                    }
+                  }}
+                  className=" transition-all duration-200"
+                  style={{
+                    background: 'var(--orenge-color)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                  }}
+                >
+                  {item}{idx<10?",":''}
+                </span>
+                <span
+                  ref={(el) => {
+                    if (el) {
+                        lineRefs.current[idx] = el;
+                    }
+                  }}
+                  className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all "
+                  style={{ width: 0 }}
+                />
+              </span>
+              )
+            })
+          }
+          {/* {words.map((word, idx) => (
             <span key={idx} className="relative animTitle inline-block group overflow-hidden word">
               <span className="relative block">
                 {[...word.replace(/ /g, '\u00A0')].map((c, i) => (
@@ -173,7 +272,7 @@ export default function HomeSection() {
               </span>
               <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all duration-500" />
             </span>
-          ))}
+          ))} */}
         </p>
       </section>
 
