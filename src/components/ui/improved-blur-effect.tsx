@@ -15,8 +15,8 @@ export default function DualDirectionBlur({text, fontSize, color}:any) {
   const updateFontSize = () => {
     if (containerRef.current) {
       const { width } = containerRef.current.getBoundingClientRect()
-      const newFontSize = Math.min(width / 100 * 18.75, fontSize) // Пример пропорционального уменьшения
-      setDynamicFontSize(newFontSize)
+      // const newFontSize = Math.min(width / 100 * 18.75, fontSize) // Пример пропорционального уменьшения
+      setDynamicFontSize(width / 100 * 18.75)
     }
   }
 
@@ -26,7 +26,7 @@ export default function DualDirectionBlur({text, fontSize, color}:any) {
 
     const canvas = document.createElement("canvas")
     canvas.width = window.innerWidth
-    canvas.height = window.innerWidth / 100 * 34.7
+    canvas.height = window.innerWidth / 100 * 34.8
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
@@ -82,8 +82,8 @@ export default function DualDirectionBlur({text, fontSize, color}:any) {
     const radius = 250
     const frontSamples = 20
     const backSamples = 20
-    const maxFrontOffset = 50
-    const maxBackOffset = 50
+    const maxFrontOffset = 80
+    const maxBackOffset = 80
     const fadeStart = 0.1
 
     // Создание временных холстов для переднего и заднего размытия

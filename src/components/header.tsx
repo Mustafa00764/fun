@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import gsap from 'gsap'
 import Menu from "./menu"
+import Lenis from '@studio-freight/lenis'
 
 interface Navigate {
   id: number
@@ -17,6 +18,8 @@ export default function Header() {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const lenisRef = useRef<Lenis | null>(null)
+  const [locked, setLocked] = useState(false)
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!buttonRef.current) return;
@@ -100,6 +103,41 @@ export default function Header() {
     })
   }, [])
 
+  useEffect(() => {
+    const lenis = lenisRef.current
+    const scrollContainer = document.documentElement // или document.body, если Lenis scrollTarget другой
+  
+    if (menu) {
+      // Остановить анимации Lenis
+      lenis?.stop()
+  
+      // Зафиксировать scroll текущей позиции
+      const scrollY = window.scrollY
+      scrollContainer.style.position = 'fixed'
+      scrollContainer.style.top = `-${scrollY}px`
+      scrollContainer.style.left = '0'
+      scrollContainer.style.right = '0'
+      scrollContainer.style.overflow = 'hidden'
+    } else {
+      // Восстановить scroll
+      const scrollY = Math.abs(parseInt(scrollContainer.style.top || '0'))
+  
+      scrollContainer.style.position = ''
+      scrollContainer.style.top = ''
+      scrollContainer.style.left = ''
+      scrollContainer.style.right = ''
+      scrollContainer.style.overflow = ''
+  
+      window.scrollTo(0, scrollY)
+      lenis?.start()
+    }
+  }, [menu])
+
+  const toggleScroll = () => {
+    setMenu(!menu)
+  }
+
+
   return (
     <header className={`header ${menu?'bg-black':""}`}>
       <Link href={'/'}>
@@ -160,7 +198,7 @@ export default function Header() {
           </button>
         </Link>
       </div>
-      <Image src={'/menu.svg'} alt="logo" onClick={()=>setMenu(!menu)} width={25} height={18} className={`menu_icon ${menu?"menu_active":""}`} />
+      <Image src={'/menu.svg'} alt="logo" onClick={toggleScroll} width={25} height={18} className={`menu_icon ${menu?"menu_active":""}`} />
       <Menu open={menu}/>
     </header>
   )
