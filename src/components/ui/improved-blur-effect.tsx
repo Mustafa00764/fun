@@ -82,8 +82,8 @@ export default function DualDirectionBlur({text, fontSize, color}:any) {
     const radius = 250
     const frontSamples = 20
     const backSamples = 20
-    const maxFrontOffset = 80
-    const maxBackOffset = 80
+    const maxFrontOffset = 60
+    const maxBackOffset = 60
     const fadeStart = 0.1
 
     // Создание временных холстов для переднего и заднего размытия

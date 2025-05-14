@@ -263,6 +263,10 @@ body {
 }
 
 .sectionOne_title{
+  display: flex;
+}
+
+.effects{
   display: none;
 }
 
