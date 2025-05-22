@@ -155,7 +155,6 @@ export default function Header() {
               }}
               className="navigate transition-all duration-300"
               style={{
-                background: 'var(--orenge-color)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
               }}

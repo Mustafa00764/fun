@@ -101,6 +101,10 @@ body {
   overflow-x: hidden;
 }
 
+button{
+  cursor: none !important;
+}
+
 .mini_logo{
   max-width: 69px;
   width: 100%;

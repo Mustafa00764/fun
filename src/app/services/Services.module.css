@@ -1,6 +1,7 @@
 .Services{
     width: 100vw;
     height: 100vh;
+    cursor: hidden !important;
 }
 
 .sectionSTwo{

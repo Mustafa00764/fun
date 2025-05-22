@@ -20,6 +20,9 @@ export default function HomeSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   // Set client-side state once mounted
   useEffect(() => {
     setIsClient(true);
@@ -119,6 +122,33 @@ export default function HomeSection() {
     };
   }, [isClient, pathname]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    const text = textRef.current;
+    const image = imageRef.current;
+
+    if (!container || !text || !image) return;
+
+    const onEnter = () => {
+      gsap.to(text, { scale: 1.1, color: "var(--white-color)", duration: 0.3, ease: "power2.out" });
+      gsap.to(image, { scale: 1.1, filter: "brightness(1.2)", duration: 0.3, ease: "power2.out" });
+    };
+
+    const onLeave = () => {
+      gsap.to(text, { scale: 1, color: "var(--white-color)", duration: 0.3, ease: "power2.out" });
+      gsap.to(image, { scale: 1, filter: "brightness(1)", duration: 0.3, ease: "power2.out" });
+    };
+
+    container.addEventListener("mouseenter", onEnter);
+    container.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      container.removeEventListener("mouseenter", onEnter);
+      container.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+
   useEffect(()=> {
     setFontSize(window.innerWidth / 100 * 18.75)
   },[fontSize])
@@ -210,17 +240,20 @@ export default function HomeSection() {
             </div>
           ))}
         </div>
-        <div className="layers mt-4"><p>All Projects</p><img src="/Layer_1.svg" alt="layer" /></div>
+        <div ref={containerRef} className="layers mt-4 cursor-pointer">
+          <p ref={textRef}>All Projects</p>
+          <img ref={imageRef} src="/Layer_1.svg" alt="layer" />
+        </div>
       </section>
 
       <section ref={sectionRef} className="sectionThree">
-        <p className="flex flex-wrap gap-4 text-lg font-medium leading-relaxed">
+        <p className="flex flex-wrap gap-y-4 gap-8 text-lg font-medium leading-relaxed">
           <span className="sectionTitle mr-3">Services</span>
 
           {
             words.map((item, idx) => {
               return(
-                <span key={idx} className="relative animTitlev word inline-block group overflow-hidden ">
+                <span key={idx} className="relative animTitlev word inline-block group ">
                 <span
                   ref={(el) => {
                     if (el) {
@@ -234,15 +267,16 @@ export default function HomeSection() {
                     WebkitBackgroundClip: 'text',
                   }}
                 >
-                  {item}{idx<10?",":''}
+                  {item}
                 </span>
+                <span className=' absolute max-[1440px]:right-[-10px] max-[769px]:right-[-4px] right-[-15px]'>{idx<10?",":''}</span>
                 <span
                   ref={(el) => {
                     if (el) {
                         lineRefs.current[idx] = el;
                     }
                   }}
-                  className="absolute bottom-0 left-0 h-[2px] w-0 bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all "
+                  className="absolute bottom-0 w-0 left-0 h-[5%] bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all "
                   style={{ width: 0 }}
                 />
               </span>
