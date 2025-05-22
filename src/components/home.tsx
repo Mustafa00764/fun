@@ -276,7 +276,7 @@ export default function HomeSection() {
                         lineRefs.current[idx] = el;
                     }
                   }}
-                  className="absolute bottom-0 w-0 left-0 h-[5%] bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all "
+                  className="absolute bottom-0 w-0 left-0 h-[6.5%] bg-[var(--orenge-color)] max-[769px]:group-hover:w-[calc(100%-9px)] group-hover:w-[calc(100%-23px)] transition-all "
                   style={{ width: 0 }}
                 />
               </span>
